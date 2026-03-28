@@ -1,7 +1,7 @@
 # BukuKasir - Product Requirements Document (PRD)
 
 **Product Name:** BukuKasir
-**Version:** 0.0.12  
+**Version:** 0.0.13  
 **Date:** March 2026
 **Status:** Prototype
 
@@ -1304,25 +1304,24 @@ All staff can see table status and add orders
 
 ## Technical Requirements
 
-**Cashier App (Android)**
+**Frontline App (Cashier/Waiter/Kitchen)**
 
 - Minimum SDK: Android 8.0 (API 26)
 - Target SDK: Android 14 (API 34)
-- Architecture: MVVM or MVI
-- Programming Language: Kotlin
-- Database: Room (local), Firebase/SQLite
+- Framework: React Native (Expo)
+- Programming Language: TypeScript
+- Local Storage: SQLite/AsyncStorage
 - Key Libraries:
-  - Retrofit/OkHttp for API calls
-  - Glide for image loading and thumbnail display
-  - MPAndroidChart for charts
-  - Firebase Cloud Messaging for notifications
+  - Expo Router / React Navigation
+  - TanStack Query for API state
+  - Expo Notifications for push notifications
   - Thermal printer SDK (ESC/POS)
 
 **Back Office (Web)**
 
-- Framework: React.js or Vue.js
+- Framework: TanStack stack (React + TanStack Router + TanStack Query)
 - UI Library: Material-UI or Ant Design
-- State Management: Redux or Vuex
+- State Management: TanStack Query
 - Charts: Chart.js or D3.js
 - Image Upload: Image compression and optimization
 - AI Image Generation: Integration with image generation API (DALL-E, Midjourney API, or Stable Diffusion)
@@ -1330,8 +1329,8 @@ All staff can see table status and add orders
 
 **Backend API**
 
-- Architecture: RESTful API or GraphQL
-- Language: Node.js or Python
+- Architecture: REST API
+- Language: Golang or Java
 - Database: PostgreSQL
 - Cache: Redis
 - File Storage: AWS S3 or similar (for thumbnails and logos)
@@ -1810,6 +1809,7 @@ Use a concise KPI set focused on product health and operational impact:
 
 | Version | Date       | Author       | Changes                                                                           |
 | ------- | ---------- | ------------ | --------------------------------------------------------------------------------- |
+| 0.0.13  | March 2026 | Product Team | Updated stack: React Native Expo app, TanStack web, backend Golang/Java with REST API |
 | 0.0.12  | March 2026 | Product Team | Authentication updated to phone-only with SMS/WhatsApp OTP (no email auth)       |
 | 0.0.11  | March 2026 | Product Team | Removed Data Protection and Audit Trail sections; waiter now limited to own orders |
 | 0.0.10  | March 2026 | Product Team | Removed Roadmap section and simplified Success Metrics KPI list                  |
