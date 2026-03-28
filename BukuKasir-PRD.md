@@ -1,7 +1,7 @@
 # BukuKasir - Product Requirements Document (PRD)
 
 **Product Name:** BukuKasir
-**Version:** 0.0.18  
+**Version:** 0.0.22  
 **Date:** March 2026
 **Status:** Prototype
 
@@ -36,7 +36,7 @@
 
 ## Executive Summary
 
-BukuKasir is a comprehensive Point-of-Sale (POS) system designed specifically for medium to upscale Food & Beverage (F&B) merchants and restaurants with multiple staff members. The system operates as part of the Buku ecosystem, sharing user authentication and database infrastructure with BukuPay.
+BukuKasir is a comprehensive Point-of-Sale (POS) system designed specifically for medium to upscale Food & Beverage (F&B) merchants and restaurants with multiple staff members. The system operates as part of the Buku ecosystem, sharing database infrastructure with BukuPay.
 
 ## Product Vision
 
@@ -104,7 +104,7 @@ Buku Ecosystem contains BukuPay, BukuKasir, and future apps all connected to a s
 **User Hierarchy**
 
 ```
-User Account (BukuPay/BukuKasir)
+User Account (BukuKasir)
 |
 +-- Business 1 (Restaurant A)
 |   |
@@ -127,10 +127,24 @@ User Account (BukuPay/BukuKasir)
 
 **User Authentication**
 
-- Single Sign-On (SSO) with BukuPay
 - Phone number-based authentication only
 - OTP verification via SMS or WhatsApp (WA)
 - Biometric authentication (optional for Cashier App)
+
+**PIN Setup & Management (Frontline Staff)**
+
+- PIN is required for frontline staff access and sensitive approvals.
+- First-time setup:
+  - Staff logs in with phone OTP
+  - System prompts "Create 6-digit PIN"
+  - User confirms PIN and completes setup
+- PIN change (self-service):
+  - Menu: Profile/Security -> Change PIN
+  - Requires current PIN + new PIN confirmation
+- PIN reset (manager action):
+  - Back Office -> Global Settings -> Staff Administration
+  - Manager triggers "Reset PIN" for selected staff
+  - Staff must create a new PIN on next login
 
 **User Roles & Permissions**
 
@@ -396,6 +410,38 @@ START
   - Standard order: Auto-dispatch to kitchen only after payment success (auto print enabled)
   - Open table order: Manual "Send to Kitchen" per order session (auto print enabled)
 - Waiter Scope Rule: Waiter can only see and modify orders created by their own account; cashier/manager can view all orders
+
+**Void Approval Workflow (Entire Order)**
+
+```
+Cashier -> Tap "Void Entire Order"
+       -> Enter Void Reason (required)
+       -> System prompts "Manager Approval Required"
+             |
+             +--> Manager PIN
+                     -> Manager enters PIN
+                     -> Validate manager role + PIN
+       -> Approval Decision
+             |
+             +--> Approved:
+             |       -> Order status = VOIDED
+             |       -> Remove from active queue/table totals
+             |       -> Create void record + show confirmation
+             |
+             +--> Rejected/Cancelled:
+                     -> No change to order
+                     -> Show "Void cancelled"
+```
+
+**Void Approval Data (Required Tracking Fields)**
+
+- void_reason
+- requested_by_staff_id
+- approved_by_staff_id
+- approved_at
+- approval_method (PIN_ONLY)
+- original_order_total
+- void_order_id
 
 **Kitchen Fulfillment Workflow (KDS + Auto Print)**
 
@@ -1005,6 +1051,7 @@ Report Filters Available:
 | Kitchen | KDS Queue | New/preparing/ready tickets grouped by station and order time |
 | Kitchen | Ticket Detail | Table/session, items, modifiers, notes, fire time |
 | Kitchen | KDS Actions | Start preparing, mark ready, reprint kitchen ticket, sync status |
+| Cashier/Waiter/Kitchen | Profile/Security > Change PIN | Change own PIN using current PIN + new PIN confirmation |
 
 **Screen Layout**
 
@@ -1243,6 +1290,7 @@ All staff can see table status and add orders
 | Global Settings > Discount Settings | Preset discounts, role limits, approval thresholds, discount reason categories |
 | Global Settings > Additional Fee Settings | Service/packaging/custom fee setup, fee calculation rules, fee display options |
 | Global Settings > Staff Administration | Staff directory, role assignment, permission setup |
+| Global Settings > Staff Administration > Reset PIN | Manager resets staff PIN; staff must set a new PIN on next login |
 | Global Settings > Business & Outlet Settings | Business profile, outlet settings, tax configuration (optional PPN), printer and integration settings |
 
 **Dashboard**
@@ -1402,7 +1450,7 @@ Inside `Global Settings`, the available configuration menus are:
 
 **BukuPay Integration**
 
-- Shared user authentication
+- No SSO with BukuPay (auth is BukuKasir OTP + PIN only)
 - Transaction history sync
 
 **Payment Integrations (Current Scope)**
@@ -1848,6 +1896,10 @@ Use a concise KPI set focused on product health and operational impact:
 
 | Version | Date       | Author       | Changes                                                                           |
 | ------- | ---------- | ------------ | --------------------------------------------------------------------------------- |
+| 0.0.22  | March 2026 | Product Team | Removed SSO references; auth now explicitly OTP (SMS/WA) + PIN only              |
+| 0.0.21  | March 2026 | Product Team | Added explicit PIN menu entries to app and Back Office quick reference tables    |
+| 0.0.20  | March 2026 | Product Team | Simplified void approval to manager PIN only; added staff PIN setup/change/reset workflow |
+| 0.0.19  | March 2026 | Product Team | Added explicit manager approval workflow for voiding entire order                |
 | 0.0.18  | March 2026 | Product Team | Added app menu quick reference table by persona (cashier, waiter, kitchen)       |
 | 0.0.17  | March 2026 | Product Team | Added explicit Back Office menu quick reference table under Back Office section   |
 | 0.0.16  | March 2026 | Product Team | Consolidated Back Office setting menus under explicit Global Settings group       |
