@@ -74,20 +74,20 @@ To provide F&B businesses with an intuitive, reliable, and feature-rich POS solu
 **Multi-Platform Approach**
 
 ```
-                    BUKU ECOSYSTEM
-  +--------------+  +--------------+  +--------------+
-  |   BukuPay    |  |  BukuKasir   |  |  Future Apps |
-  +------+-------+  +------+-------+  +------+-------+
-         |                 |                 |
-         +-----------------+-----------------+
-                           |
-                    +------+------+
-                    | Shared User |
-                    |  Database   |
-                    +-------------+
+                           BUKU ECOSYSTEM
+  +--------------+  +--------------+  +--------------+  +--------------+  +--------------+  +--------------+
+  |   BukuPay    |  |  NEW: BukuKasir   |  | BukuWarung   |  |  BukuAgen    |  | MiniATMPro   |  |  Future Apps |
+  +------+-------+  +------+-------+  +------+-------+  +------+-------+  +------+-------+  +------+-------+
+         |                 |                 |                 |                 |                 |
+         +-----------------+-----------------+-----------------+-----------------+-----------------+
+                                                    |
+                                             +------+------+
+                                             | Shared User |
+                                             |  Database   |
+                                             +-------------+
 ```
 
-Buku Ecosystem contains BukuPay, BukuKasir, and future apps all connected to a shared user database.
+Buku Ecosystem contains BukuPay, BukuKasir, BukuWarung, BukuAgen, MiniATMPro, and future apps all connected to a shared user database.
 
 **Application Components**
 
