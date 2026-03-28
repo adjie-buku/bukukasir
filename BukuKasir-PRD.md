@@ -1,7 +1,7 @@
 # BukuKasir - Product Requirements Document (PRD)
 
 **Product Name:** BukuKasir
-**Version:** 0.0.24  
+**Version:** 0.0.25  
 **Date:** March 2026
 **Status:** Prototype
 
@@ -658,10 +658,12 @@ Order Transaction
 - Fee application: Before or after tax (configurable)
 - Fee visibility: Show as separate line items on receipt
 
-**Receipt Structure**
+**Receipt structure (cashier / customer)**
+
+Printed at the cashier after payment (or on demand as bill preview where applicable). Same layout is used for **customer copy** and **merchant copy**; optional **kitchen copy** is a shortened variant (see Kitchen ticket structure below).
 
 ```
-Printed Receipt (80mm/58mm Thermal)
+Customer receipt (80mm/58mm thermal)
 |
 +-- HEADER (Customizable)
 |   +-- Logo Image (optional)
@@ -699,6 +701,41 @@ Printed Receipt (80mm/58mm Thermal)
     +-- Social Media: @warungmakan.sari
 ```
 
+**Kitchen ticket structure (kitchen printer)**
+
+Printed when order is sent to kitchen (or auto-printed after payment on standard orders per flow). Uses the same **58mm or 80mm** thermal width as configured for kitchen printers; layout is **operation-focused** (no prices unless business enables “show prices on kitchen ticket”).
+
+```
+Kitchen ticket (58mm/80mm thermal, ESC/POS)
+|
++-- TICKET HEADER
+|   +-- Ticket #: K-1042
+|   +-- Fired at: 14:32
+|   +-- Order #: 1024 | Session: 2 (if open table)
+|   +-- Table: T5 | Dine-in / Takeaway
+|   +-- Station: HOT KITCHEN (from printer routing)
+|
++-- ITEMS (line per item)
+|   +-- 2x Nasi Goreng
+|   |   +-- Modifiers: Extra Egg, Extra Spicy
+|   +-- 1x Es Teh Manis
+|   |   +-- Note: Less ice
+|   +-- --------------------------------
+|
++-- TICKET FOOTER (minimal)
+    +-- Staff: Budi (optional, toggle)
+    +-- Special instructions (order-level, if any)
+```
+
+**Print layout rules (summary)**
+
+| Output | Primary user | Typical content |
+| ------ | ------------ | --------------- |
+| Customer receipt | Guest / cashier | Header, full line items, financial breakdown, payment, change, footer |
+| Merchant copy | Store | Same as customer or duplicate with “MERCHANT” marker (configurable) |
+| Kitchen ticket | Kitchen | Table/session, station, items, modifiers, notes; prices optional |
+| Kitchen copy on receipt printer | Kitchen pass-through | Subset of customer receipt or duplicate ticket (follows receipt “kitchen copy” setting) |
+
 **Receipt Customization**
 
 - Custom Header:
@@ -716,9 +753,10 @@ Printed Receipt (80mm/58mm Thermal)
   - QR code for feedback/survey
   - Custom text (unlimited lines)
 - Receipt Settings:
-  - Paper size (58mm or 80mm thermal printer)
+  - Paper size (58mm or 80mm thermal printer; applies per printer profile where configured)
   - Font size options
   - Show/hide fields (tax breakdown, staff name, order time)
+  - Kitchen ticket: show prices (on/off)
   - Duplicate receipt option
   - Email receipt option
 
@@ -1299,7 +1337,7 @@ All staff can see table status and add orders
 | Menu Configuration                                 | Menu editor, thumbnail upload/AI generation, scheduling, import/export, item analytics                |
 | Reports Center                                     | Interactive charts, drill-down analytics, scheduled report emails, export                             |
 | Global Settings > Payment Method Settings          | Enable/disable methods, custom methods, display order, permissions, references, default method        |
-| Global Settings > Receipt Configuration            | Header/footer editor, receipt layout/toggles, paper/font, auto-print, duplicate copies                |
+| Global Settings > Receipt Configuration            | Header/footer editor, cashier receipt layout/toggles, kitchen ticket layout (e.g. prices on/off), paper/font, auto-print, duplicate copies |
 | Global Settings > Discount Settings                | Preset discounts, role limits, approval thresholds, discount reason categories                        |
 | Global Settings > Additional Fee Settings          | Service/packaging/custom fee setup, fee calculation rules, fee display options                        |
 | Global Settings > Staff Administration             | Staff directory, role assignment, permission setup                                                    |
@@ -1355,11 +1393,12 @@ Inside `Global Settings`, the available configuration menus are:
     - QR code generator for feedback/social media
     - Terms and policy text
   - Receipt Settings:
-    - Paper size selection (58mm/80mm)
+    - Paper size selection (58mm/80mm) for cashier and kitchen printers
     - Font size adjustment
-    - Toggle fields on/off
+    - Toggle fields on/off (customer receipt)
+    - Kitchen ticket: show item prices (on/off; default off)
     - Auto-print after payment toggle
-    - Duplicate copy options
+    - Duplicate copy options (customer / merchant / kitchen copy)
 - Discount Settings
   - Preset discount values configuration
   - Maximum discount limit per role
@@ -1752,6 +1791,7 @@ Use a concise KPI set focused on product health and operational impact:
 
 | Version | Date       | Author       | Changes                                                                                        |
 | ------- | ---------- | ------------ | ---------------------------------------------------------------------------------------------- |
+| 0.0.25  | March 2026 | Product Team | Documented cashier vs kitchen print layout (receipt structure + kitchen ticket structure)      |
 | 0.0.24  | March 2026 | Product Team | Refactored model to Business=Outlet (removed separate outlet context references)              |
 | 0.0.23  | March 2026 | Product Team | Added explicit Void Reporting Rules under Reporting & Analytics                                |
 | 0.0.22  | March 2026 | Product Team | Removed SSO references; auth now explicitly OTP (SMS/WA) + PIN only                            |
