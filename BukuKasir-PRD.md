@@ -1,7 +1,7 @@
 # BukuKasir - Product Requirements Document (PRD)
 
 **Product Name:** BukuKasir
-**Version:** 0.0.22  
+**Version:** 0.0.23  
 **Date:** March 2026
 **Status:** Prototype
 
@@ -997,6 +997,26 @@ Report Filters Available:
 - Tax Report: Tax collected breakdown (shown only when PPN is enabled)
 - Profit Margin: By item and overall
 
+**Void Reporting Rules**
+
+- Gross Sales includes all created orders before void adjustment.
+- Voided Amount is reported as a separate metric (not merged into discounts).
+- Net Sales formula: `Gross Sales - Voided Amount - Discounts + Additional Fees` (tax handling follows outlet tax mode).
+- Order counts must show:
+  - Total Orders Created (includes voided)
+  - Completed Orders (excludes voided)
+  - Voided Orders (separate count)
+- Tax/Service handling for voided orders:
+  - If order is voided before finalization, tax/service are not counted as collected.
+  - If previously counted, system creates reversal entries in report totals.
+- Staff performance:
+  - Voided orders do not count as successful sales.
+  - Reports show void count and void amount by requester and approving manager.
+- Open table reporting:
+  - Voided sessions/items are excluded from paid totals.
+  - Void events remain visible in timeline/history for traceability.
+- Report exports must include: `status`, `void_reason`, `requested_by`, `approved_by`, `approved_at`.
+
 **Open Table Reports**
 
 - Active Open Tables: Currently occupied tables with running totals
@@ -1896,6 +1916,7 @@ Use a concise KPI set focused on product health and operational impact:
 
 | Version | Date       | Author       | Changes                                                                           |
 | ------- | ---------- | ------------ | --------------------------------------------------------------------------------- |
+| 0.0.23  | March 2026 | Product Team | Added explicit Void Reporting Rules under Reporting & Analytics                   |
 | 0.0.22  | March 2026 | Product Team | Removed SSO references; auth now explicitly OTP (SMS/WA) + PIN only              |
 | 0.0.21  | March 2026 | Product Team | Added explicit PIN menu entries to app and Back Office quick reference tables    |
 | 0.0.20  | March 2026 | Product Team | Simplified void approval to manager PIN only; added staff PIN setup/change/reset workflow |
