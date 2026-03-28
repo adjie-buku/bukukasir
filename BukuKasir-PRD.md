@@ -1,7 +1,7 @@
 # BukuKasir - Product Requirements Document (PRD)
 
 **Product Name:** BukuKasir
-**Version:** 0.0.4  
+**Version:** 0.0.10  
 **Date:** March 2026
 **Status:** Prototype
 
@@ -31,7 +31,6 @@
 - [User Experience (UX) Requirements](#user-experience-ux-requirements)
   - [UX Acceptance Criteria](#ux-acceptance-criteria)
 - [Success Metrics (KPIs)](#success-metrics-kpis)
-- [Roadmap](#roadmap)
 - [Risks & Mitigation](#risks--mitigation)
 - [Appendix](#appendix)
 
@@ -67,7 +66,8 @@ To provide F&B businesses with an intuitive, reliable, and feature-rich POS solu
 
 1. Owner/Manager - Uses web back office for management and reporting
 2. Cashier Staff - Uses Android tablet for order processing and payment
-3. Kitchen Staff - Receives orders (future enhancement: KDS integration)
+3. Waiter Staff - Uses Android tablet for table service and order entry (no payment access)
+4. Kitchen Staff - Uses Android tablet (KDS interface) to receive and process orders
 
 ## System Architecture
 
@@ -92,11 +92,11 @@ Buku Ecosystem contains BukuPay, BukuKasir, and future apps all connected to a s
 **Application Components**
 
 
-| Component   | Platform                | Primary Users   | Key Functions                                                                                                                  |
-| ----------- | ----------------------- | --------------- | ------------------------------------------------------------------------------------------------------------------------------ |
-| Cashier App | Native Android (Tablet) | Cashier Staff   | Order taking, payment processing, table assignment, transaction customization                                                  |
-| Back Office | Web (Responsive)        | Owners/Managers | Menu management with thumbnails and AI generation, reporting, staff management, payment method customization, receipt settings |
-| API Backend | Cloud-based             | Both            | Data synchronization, business logic, user authentication                                                                      |
+| Component     | Platform                | Primary Users                               | Key Functions                                                                                                                                                                  |
+| ------------- | ----------------------- | ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Frontline App | Native Android (Tablet) | Cashier Staff, Waiter Staff, Kitchen Staff | Role-based interface in one app: cashier UI (order/payment), waiter UI (order-taking and table service), and kitchen UI (KDS) for queue/prep status updates with auto-print |
+| Back Office   | Web (Responsive)        | Owners/Managers              | Menu management with thumbnails and AI generation, reporting, staff management, payment method customization, receipt settings                 |
+| API Backend   | Cloud-based             | Both                         | Data synchronization, business logic, user authentication, real-time order dispatch to kitchen                                                 |
 
 
 ## User Management & Multi-Tenancy
@@ -135,13 +135,13 @@ User Account (BukuPay/BukuKasir)
 **User Roles & Permissions**
 
 
-| Role    | Permissions                                                                                                                                                                                                                   |
-| ------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Owner   | Full access to all features, can create businesses, manage all staff, customize payment methods, configure receipt templates, view all reports                                                                                |
-| Manager | Menu management with thumbnail uploads and AI generation, staff management (except owner), customize payment methods, configure receipt templates, view reports, cannot delete business                                       |
-| Cashier | Process orders, manage open tables (add orders, partial payments), apply discounts and additional fees, process payments with method selection, print custom receipts, view assigned tables, view limited reports (own shift) |
-| Kitchen | View incoming orders, update order status (if KDS enabled)                                                                                                                                                                    |
-| Waiter  | Create orders, view tables, add to open tables, cannot process payments                                                                                                                                                       |
+| Role    | Permissions                                                                                                                                                                                                       |
+| ------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Owner   | Full access to all features, can create businesses, manage all staff, customize payment methods, configure receipt templates, view all reports                                                                    |
+| Manager | Menu management with thumbnail uploads and AI generation, staff management (except owner), customize payment methods, configure receipt templates, view reports, cannot delete business                           |
+| Cashier | Process orders, manage open tables (add orders, partial payments), apply discounts and additional fees, process payments with method selection, print custom receipts, view assigned tables, view limited reports |
+| Kitchen | View incoming orders on KDS tablet, update prep status (New/Preparing/Ready), monitor queue by station, trigger reprint of kitchen tickets                                                                        |
+| Waiter  | Create orders, view tables, add to open tables, cannot process payments                                                                                                                                           |
 
 
 ## Core Features
@@ -190,7 +190,7 @@ Menu
 - Variants: Size options, portion options with different pricing
 - Availability Toggle: Mark items as available/unavailable
 - Printer Routing: Assign items to specific kitchen printers
-- Tax Configuration: Inclusive/exclusive tax per item
+- Tax Configuration: Inclusive/exclusive tax per item with optional global PPN toggle per outlet
 
 ### Table Management
 
@@ -304,12 +304,18 @@ START
   |                                 |
   |                                 v
   |                      +----------------------------------+
-  |                      | Send to Kitchen                  |
+  |                      | Pay Full                         |
   |                      +----------------------------------+
   |                                 |
   |                                 v
   |                      +----------------------------------+
-  |                      | Pay Full -> Print Receipt        |
+  |                      | Auto Send to Kitchen             |
+  |                      | + Auto Print Kitchen Ticket      |
+  |                      +----------------------------------+
+  |                                 |
+  |                                 v
+  |                      +----------------------------------+
+  |                      | Print Receipt                    |
   |                      +----------------------------------+
   |                                 |
   |                                 v
@@ -373,7 +379,7 @@ START
 **Order Types**
 
 - Dine-in (with table assignment)
-  - Standard Order: Single order, pay and close
+  - Standard Order: Single order, pay first, then auto-send to kitchen and close
   - Open Table: Continuous ordering, keep adding items over time
 - Takeaway
 - Delivery (future: integration with delivery platforms Grabfood, Gofood)
@@ -386,6 +392,70 @@ START
 - Reprint receipts
 - Order history lookup
 - Open Table Management: Add to existing table, view running total, partial payments
+- Kitchen Dispatch:
+  - Standard order: Auto-dispatch to kitchen only after payment success (auto print enabled)
+  - Open table order: Manual "Send to Kitchen" per order session (auto print enabled)
+
+**Kitchen Fulfillment Workflow (KDS + Auto Print)**
+
+```
+CASHIER / WAITER APP
+       |
+       +---> STANDARD ORDER FLOW
+       |         |
+       |         v
+       |   +----------------------------------+
+       |   | Payment Success                  |
+       |   +----------------------------------+
+       |         |
+       |         v
+       |   +----------------------------------+
+       |   | Auto Dispatch to Kitchen         |
+       |   | + Auto Print Kitchen Ticket      |
+       |   +----------------------------------+
+       |         |
+       |         v
+       |      (to KITCHEN APP queue)
+       |
+       +---> OPEN TABLE FLOW
+                 |
+                 v
+           +----------------------------------+
+           | Tap "Send to Kitchen"            |
+           +----------------------------------+
+                 |
+                 v
+           +----------------------------------+
+           | Dispatch + Auto Print Ticket     |
+           +----------------------------------+
+                 |
+                 v
+             (to KITCHEN APP queue)
+                 |
+                 v
+           +----------------------------------+
+           | KITCHEN APP (same Android app)   |
+           | Role: Kitchen                    |
+           | View Queue: New/Preparing/Ready  |
+           +----------------------------------+
+       |
+       +---> Tap ticket -> "Start Preparing"
+       |        |
+       |        v
+       |   Status: PREPARING
+       |
+       +---> Tap ticket -> "Mark Ready"
+                |
+                v
+           Status: READY
+                |
+                v
+     Cashier/Waiter sees item ready status
+
+Open Table behavior:
+- Every "Add More Items" send creates a new kitchen ticket linked to same table/session.
+- Kitchen queue groups tickets by table and shows session order.
+```
 
 **Open Table Workflow**
 
@@ -620,27 +690,25 @@ Payment Methods (Admin Configurable)
 |   |   +-- Round to nearest: Rp 100
 |   |   +-- Permission: Cashier+
 |   |
-|   +-- Card (EDC)
+|   +-- Card (Manual Record)
 |   |   +-- Enable/Disable: ON
-|   |   +-- Require Last 4 Digits: YES
-|   |   +-- Supported: Visa, Mastercard, JCB
+|   |   +-- Optional Reference: Last 4 Digits / Approval Code
 |   |   +-- Permission: Cashier+
 |   |
-|   +-- QRIS (Unified QR)
+|   +-- QRIS (Manual Record)
 |   |   +-- Enable/Disable: ON
 |   |   +-- Providers: GoPay, OVO, DANA, LinkAja
-|   |   +-- Auto-check payment status: YES
+|   |   +-- Manual Confirmation: YES
 |   |   +-- Permission: Cashier+
 |
-+-- Digital Wallets
++-- Digital Wallets (Manual Record)
 |   |
-|   +-- BukuPay (Integrated)
+|   +-- BukuPay
 |   |   +-- Enable/Disable: ON
-|   |   +-- Show Balance: YES
-|   |   +-- Direct Deduction: YES
+|   |   +-- Optional Reference Number
 |   |   +-- Permission: Cashier+
 |   |
-|   +-- External E-Wallets (Deep Link)
+|   +-- External E-Wallets
 |       +-- GoPay: ON
 |       +-- OVO: ON
 |       +-- DANA: ON
@@ -648,20 +716,11 @@ Payment Methods (Admin Configurable)
 |
 +-- Custom Methods (Created by Admin)
 |   |
-|   +-- Voucher
-|   |   +-- Icon: [Voucher Icon]
-|   |   +-- Require Reference: YES
-|   |   +-- Permission: Manager+
-|   |
-|   +-- Employee Meal
-|   |   +-- Icon: [Employee Icon]
-|   |   +-- Require PIN: YES
-|   |   +-- Permission: Manager+
-|   |
-|   +-- House Account (Credit)
-|       +-- Icon: [Account Icon]
-|       +-- Require Approval: YES
-|       +-- Permission: Owner only
+|   +-- Free Text Method Name
+|       +-- Input: User can type any payment label
+|       +-- Examples: Transfer, Partner Voucher, Compliment
+|       +-- Saved exactly as typed in transaction record
+|       +-- Optional Reference Number
 |
 +-- Split Payment
     +-- Enable Multiple Methods: YES
@@ -673,34 +732,32 @@ Payment Method Priority (Display Order):
 2. QRIS
 3. BukuPay
 4. Card
-5. Voucher
+5. Custom (free text)
 ```
 
 **Payment Method Customization (Admin)**
 
 - Enable/Disable Methods: Toggle payment methods on/off
-- Custom Payment Methods: Create custom methods (e.g., Voucher, Employee Meal, House Account)
+- Custom Payment Method: Free text input (user can type any method name)
 - Payment Method Settings:
   - Display name customization
-  - Icon/image upload
   - Default payment method
   - Require reference number (for tracking)
-  - Cashier permission level required
 - Payment Method Ordering: Drag to reorder display priority
 - Method-Specific Settings:
   - Cash: Enable/disable change calculation
-  - Card: Require last 4 digits, support multiple card types
-  - E-wallet: Deep linking to apps
-  - BukuPay: Direct integration with wallet balance check
+  - Card: Require optional reference input (last 4 digits / approval code)
+  - E-wallet: Record transaction reference manually
+  - BukuPay: Record as payment type only (no wallet check/deduction)
 
 **Payment Methods Available**
 
 - Cash: With automatic change calculation
-- Card: Credit/Debit card (EDC integration)
-- QRIS: Unified QR code payment
+- Card: Credit/Debit card (manual record)
+- QRIS: Manual record of QRIS payment
 - E-wallets: GoPay, OVO, DANA, LinkAja
-- BukuPay: Direct wallet deduction with balance display
-- Custom Methods: Vouchers, complimentary, employee meals
+- BukuPay: Payment label for bookkeeping (manual record)
+- Custom Method: Free text label (any value typed by user)
 - Split Payment: Multiple methods for single transaction
 
 **Payment Features**
@@ -710,7 +767,7 @@ Payment Method Priority (Display Order):
 - Partial payment tracking
 - Refund processing with reason
 - Payment reconciliation
-- Real-time payment status updates
+- Manual payment confirmation with optional reference number
 
 ### Staff Management
 
@@ -737,13 +794,11 @@ Business: Warung Makan Sari
 |   |   |
 |   |   +-- Cashier (2)
 |   |   |   +-- Budi
-|   |   |   |   +-- Shift: Day (08:00-16:00)
 |   |   |   |   +-- PIN: ****
 |   |   |   |   +-- Permissions: Orders, Payments, Open Tables
 |   |   |   |   +-- Today Sales: Rp 2.4M (45 orders)
 |   |   |   |
 |   |   |   +-- Ani
-|   |   |       +-- Shift: Night (16:00-00:00)
 |   |   |       +-- PIN: ****
 |   |   |       +-- Permissions: Orders, Payments, Open Tables
 |   |   |       +-- Today Sales: Rp 1.8M (32 orders)
@@ -757,27 +812,17 @@ Business: Warung Makan Sari
 |   |       +-- Chef Ahmad, Chef Maya
 |   |       +-- Permissions: View orders, Update status
 |   |       +-- KDS Access: Enabled
-|   |
-|   +-- Shift Schedule (Today)
-|       +-- Morning: Budi, Rudi, Siti, Chef Ahmad
-|       +-- Evening: Ani, Joko, Chef Maya
 |
 +-- Outlet: Branch (Bandung)
     +-- Manager: Pak Tono
     +-- Cashier: 1 staff
     +-- Waiter: 2 staff
 
-Staff Activity Audit Trail:
-[Timestamp] [Staff] [Action] [Order/Table] [Details]
-14:32:15    Budi    Order Created   T5      Rp 150K
-14:45:22    Ani     Discount Applied T3     10% - Manager Approved
-15:10:05    Budi    Payment Received T5      Cash Rp 150K
 ```
 
 **Staff Features**
 
 - Staff Profiles: Name, role, contact, PIN code
-- Shift Management: Clock in/out, shift reports
 - Performance Tracking: Sales by staff, orders processed
 - Access Control: Role-based permissions
 
@@ -785,7 +830,6 @@ Staff Activity Audit Trail:
 
 - Add/edit/delete staff (manager/owner only)
 - Assign staff to specific outlets
-- View staff activity logs
 - Reset PIN codes
 
 ### Reporting & Analytics
@@ -903,7 +947,7 @@ Report Filters Available:
 **Financial Reports**
 
 - Revenue Report: Gross and net revenue after discounts and fees
-- Tax Report: Tax collected breakdown
+- Tax Report: Tax collected breakdown (shown only when PPN is enabled)
 - Profit Margin: By item and overall
 
 **Open Table Reports**
@@ -934,6 +978,15 @@ Report Filters Available:
 - Speed: Fast order entry (< 30 seconds per order)
 - Visual Recognition: Optional product thumbnails for quick menu navigation (falls back to text view)
 - Visibility: Clear order summary always visible
+
+**Role-Based Interfaces (Single App)**
+
+- Single Android app package for cashier, waiter, and kitchen devices
+- Interface is determined by authenticated staff role at login
+- Cashier role: table grid, menu entry, discounts, payment, receipts
+- Waiter role: table grid, menu entry, order notes/modifiers, send-to-kitchen, bill request (no payment controls)
+- Kitchen role (KDS): ticket queue, prep status controls, station filtering, reprint kitchen ticket
+- Managers can optionally switch between cashier, waiter, and kitchen views (permission-based)
 
 **Screen Layout**
 
@@ -991,6 +1044,23 @@ Report Filters Available:
 - Payment: Full-screen payment interface with method selection
 - Partial Payment: Pay partial amount while keeping table open
 - Receipt Preview: Before printing with header/footer preview
+
+**Kitchen Interface (KDS) - Key Interactions**
+
+- Queue View: Real-time list grouped by station and sorted by order time
+- Ticket Actions: Accept/New -> Preparing -> Ready
+- Ticket Detail: Show table, session number, item modifiers, special instructions, fire time
+- Station Filter: Hot kitchen / cold kitchen / bar routing views
+- Reprint: Reprint kitchen ticket from KDS when printer jam/misprint occurs
+- Sync Indicator: Show online/offline state and pending status updates
+
+**Waiter Interface - Key Interactions**
+
+- Table Service View: Fast table status and seat/capacity visibility
+- Order Entry: Add items/modifiers/notes and send order to kitchen
+- Open Table Continuation: Add more items to occupied tables in <= 2 taps
+- Bill Request: Mark table as "Ready to Pay" for cashier handoff
+- No Payment Controls: Waiter role cannot see `PAY NOW` or payment method actions
 
 **Open Table User Scenarios**
 
@@ -1073,11 +1143,11 @@ All staff can see table status and add orders
   |
   +---> Cash ----------------------> Enter Amount -> Calculate Change -> Confirm
   |
-  +---> Card ----------------------> Enter Card Details -> Process -> Confirm
+  +---> Card ----------------------> Enter Amount + Optional Ref -> Confirm
   |
-  +---> QRIS/E-wallet -------------> Display QR Code -> Scan -> Confirm
+  +---> QRIS/E-wallet -------------> Enter Amount + Optional Ref -> Confirm
   |
-  +---> BukuPay -------------------> Check Balance -> Deduct -> Confirm
+  +---> BukuPay -------------------> Enter Amount + Optional Ref -> Confirm
   |
   +---> Split Payment -------------> Select Method 1 (Amount) -> Select Method 2 (Amount) -> Confirm
   |
@@ -1203,19 +1273,28 @@ All staff can see table status and add orders
 - Staff directory
 - Role assignment
 - Permission customization
-- Activity audit logs
 
 **Settings**
 
 - Business profile
 - Outlet settings
-- Tax configuration
+- Tax configuration:
+  - PPN toggle (enable/disable per outlet; optional)
+  - PPN rate setting (active only when enabled)
+  - Inclusive/exclusive mode
+  - Tax label on receipt (show/hide)
 - Printer configuration
 - Integration settings
 
 **Reports Center**
 
-- Interactive charts and graphs
+- Interactive charts and graphs (required)
+- Default chart widgets:
+  - Sales trend line chart (daily/weekly/monthly)
+  - Payment method pie/donut chart
+  - Category sales bar chart
+  - Hourly sales heatmap
+  - Open table duration chart
 - Drill-down capabilities
 - Discount and fee analytics
 - Scheduled report emails
@@ -1256,10 +1335,15 @@ All staff can see table status and add orders
 - File Storage: AWS S3 or similar (for thumbnails and logos)
 - Authentication: JWT tokens
 - Real-time: WebSocket for live updates
+- Multi-user concurrency:
+  - Multiple staff can access same outlet data simultaneously
+  - Order/table/payment updates propagate in real time to all active devices
+  - Target sync latency: < 2 seconds on stable network
+  - Conflict handling for concurrent edits (latest server state + explicit user refresh prompt when needed)
 
-**Hardware Requirements (Cashier)**
+**Hardware Requirements (Frontline App: Cashier + Waiter + Kitchen)**
 
-- Android tablet (minimum 10-inch, 1080p)
+- Android tablet (minimum 8-inch for kitchen, 10-inch recommended for cashier, 1080p)
 - 3GB RAM minimum
 - 32GB storage minimum
 - Bluetooth for printer connection
@@ -1269,25 +1353,23 @@ All staff can see table status and add orders
 **Peripheral Support**
 
 - Printers: Bluetooth thermal printers (58mm and 80mm)
-- Card Readers: Bluetooth EDC devices
+- Card Readers: Optional (not required in current payment record-only scope)
 - Cash Drawers: USB or Bluetooth connected
 - Barcode Scanners: Bluetooth or USB OTG
-- Kitchen Display: Android tablet or dedicated KDS
+- Kitchen Display: Android tablet running BukuKasir Kitchen interface (same app, role-based UI)
 
 ## Integration Requirements
 
 **BukuPay Integration**
 
 - Shared user authentication
-- Wallet balance display in payment screen
-- Direct payment from BukuPay wallet
 - Transaction history sync
 
-**Payment Gateway Integrations**
+**Payment Integrations (Current Scope)**
 
-- Midtrans/Xendit for card payments
-- QRIS aggregator integration
-- E-wallet deep linking
+- No external payment gateway integration in current scope
+- No direct e-wallet / QRIS / BukuPay API payment processing
+- All payment methods are recorded manually for bookkeeping and reconciliation
 
 **Printer Integration**
 
@@ -1296,6 +1378,8 @@ All staff can see table status and add orders
 - Print queue management
 - Template customization with header/footer
 - Support for 58mm and 80mm paper widths
+- Auto-print kitchen tickets when order is sent to kitchen
+- Reprint API/action support from cashier and kitchen interfaces
 
 **Image Storage & AI Generation**
 
@@ -1312,6 +1396,8 @@ All staff can see table status and add orders
 
 **Future Integrations**
 
+- Payment gateways (Midtrans/Xendit) for online confirmation
+- QRIS aggregator and e-wallet API integrations
 - Accounting software (Jurnal, QuickBooks)
 - Delivery platforms (GoFood, GrabFood, ShopeeFood)
 - Inventory management systems
@@ -1437,7 +1523,9 @@ Order
 - staff_id, customer_name
 - order_type (dine_in/takeaway/delivery)
 - is_open_table_order (boolean)
-- status, subtotal_amount
+- status, kitchen_status (new/preparing/ready/served), sent_to_kitchen_at
+- kitchen_ticket_printed (boolean), kitchen_ticket_printed_at
+- subtotal_amount
 - discount_amount, discount_reason, discount_type
 - additional_fees[], fee_total
 - tax_amount, tax_rate
@@ -1451,7 +1539,18 @@ OrderItem
 - quantity, unit_price
 - discount_amount (item-level)
 - modifiers[], variant
+- kitchen_station (hot_kitchen/cold_kitchen/bar)
+- prep_status (new/preparing/ready/served)
 - subtotal
+
+KitchenTicket
+
+- id, order_id, order_item_ids[]
+- outlet_id, table_id, open_table_session_id
+- station (hot_kitchen/cold_kitchen/bar)
+- status (new/preparing/ready)
+- printed_at, reprinted_count
+- created_at, updated_at
 
 OpenTableSession
 
@@ -1503,7 +1602,7 @@ Staff
 
 - JWT-based authentication
 - Role-based access control (RBAC)
-- PIN protection for cashier app
+- PIN protection for frontline app (cashier and kitchen roles)
 - Session timeout (configurable)
 
 **Data Protection**
@@ -1541,7 +1640,7 @@ Staff
 **Tax Compliance**
 
 - Support for Indonesian tax regulations
-- PPn (Value Added Tax) calculation
+- Optional PPn (Value Added Tax) calculation per outlet (can be enabled or disabled)
 - PB1 (Service Charge) handling
 - Tax invoice generation
 
@@ -1596,6 +1695,7 @@ Acceptance criteria below are **product-level**: design and engineering must be 
 
 - Active business and active outlet are always visible in cashier and back office chrome; switching outlet requires explicit confirmation if open tables or unsaved drafts exist.
 - After switching context, all lists and totals reflect the new scope within one screen transition (no stale data without a labeled “refreshing” state).
+- Multi-user live sync: when two or more staff open the same outlet at the same time, order/table/payment status changes are reflected across active devices in near real time.
 
 **Cashier: speed & power paths**
 
@@ -1670,77 +1770,18 @@ Acceptance criteria below are **product-level**: design and engineering must be 
 
 ## Success Metrics (KPIs)
 
-**Business Metrics**
+Use a concise KPI set focused on product health and operational impact:
 
-- Monthly Active Businesses
-- Average Orders per Business per Day
-- Average Transaction Value
-- Average Discount Rate
-- Service Charge Collection Rate
-- Open Table Usage: Percentage of dine-in orders using open table feature
-- Average Orders per Open Table: How many order sessions per open table
-- Average Table Duration: Time from first order to final payment
-- Table Turnover Rate: Number of tables served per day
-- Partial Payment Adoption: Usage of partial payment feature
-- Customer Retention Rate
-- Revenue per User (ARPU)
-
-**Technical Metrics**
-
-- App Store Rating (Target: 4.5+)
-- Crash Rate (Target: < 0.1%)
-- API Error Rate (Target: < 0.5%)
-- Image Load Success Rate (Target: > 99%)
-- User Session Duration
-- Feature Adoption Rate
-
-**Operational Metrics**
-
-- Average Order Processing Time
-- Payment Success Rate
-- Receipt Print Success Rate
-- Staff Training Time (Target: < 30 minutes)
-- Support Ticket Volume
-- Net Promoter Score (NPS)
-
-## Roadmap
-
-**Phase 1 - MVP (Months 1-3)**
-
-- Core order management
-- Open Table functionality (continuous ordering, multiple sessions)
-- Basic menu management with optional thumbnails
-- AI thumbnail generation integration
-- Cash and basic digital payments
-- Custom receipt header/footer
-- Simple reporting
-- Single outlet support
-
-**Phase 2 - Enhanced Features (Months 4-6)**
-
-- Modifier and variant support
-- Table management with floor plan
-- Staff management and access control
-- Discount and additional fee system
-- Payment method customization
-- Advanced reporting
-- Multi-outlet support
-
-**Phase 3 - Scale & Integrate (Months 7-9)**
-
-- Inventory management
-- BukuPay deep integration
-- Third-party integrations
-- Advanced analytics
-- Loyalty program
-
-**Phase 4 - Enterprise Features (Months 10-12)**
-
-- Multi-location dashboard
-- Franchise management
-- Advanced permissions
-- API for custom integrations
-- White-label options
+- Daily Active Businesses (DAB)
+- Orders per outlet per day
+- Average Order Value (AOV)
+- Open table adoption rate
+- Order-to-payment completion time (median)
+- Payment record accuracy rate
+- KDS ticket readiness time (send-to-ready, median)
+- Crash-free sessions (%)
+- Real-time sync success rate (< 2s target)
+- Report usage rate (weekly active report viewers)
 
 ## Risks & Mitigation
 
@@ -1779,13 +1820,19 @@ Acceptance criteria below are **product-level**: design and engineering must be 
 **Document History**
 
 
-| Version | Date       | Author       | Changes                                                        |
-| ------- | ---------- | ------------ | -------------------------------------------------------------- |
-| 0.4     | March 2026 | Product Team | Integrated Open Table branch directly into the main Order Flow |
-| 0.3     | March 2026 | Product Team | Added visual ASCII tree charts for all Core Features sections  |
-| 0.2     | March 2026 | Product Team | Added table of contents with section anchor links              |
-| 1.1     | March 2026 | Product Team | Added UX Acceptance Criteria; deduplicated Report Filters list |
-| 1.0     | March 2025 | Product Team | Initial PRD                                                    |
+| Version | Date       | Author       | Changes                                                                           |
+| ------- | ---------- | ------------ | --------------------------------------------------------------------------------- |
+| 0.0.10  | March 2026 | Product Team | Removed Roadmap section and simplified Success Metrics KPI list                  |
+| 0.0.9   | March 2026 | Product Team | Added dedicated waiter interface (role-based, no payment access) in frontline app |
+| 0.0.8   | March 2026 | Product Team | Added optional PPN config, mandatory report charts, and real-time multi-user sync requirements |
+| 0.0.7   | March 2026 | Product Team | Simplified custom payment method to free-text user input (any label)             |
+| 0.0.6   | March 2026 | Product Team | Set payment management to record-only (no payment integrations in current scope)  |
+| 0.0.5   | March 2026 | Product Team | Added KDS as role-based tablet interface in same app + auto-print kitchen tickets |
+| 0.0.4   | March 2026 | Product Team | Integrated Open Table branch directly into the main Order Flow                    |
+| 0.3     | March 2026 | Product Team | Added visual ASCII tree charts for all Core Features sections                     |
+| 0.2     | March 2026 | Product Team | Added table of contents with section anchor links                                 |
+| 1.1     | March 2026 | Product Team | Added UX Acceptance Criteria; deduplicated Report Filters list                    |
+| 1.0     | March 2025 | Product Team | Initial PRD                                                                       |
 
 
 **Document Owner:** Product Management Team
