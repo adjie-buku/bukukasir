@@ -1,7 +1,7 @@
 # BukuKasir - Product Requirements Document (PRD)
 
 **Product Name:** BukuKasir
-**Version:** 0.3  
+**Version:** 0.0.4  
 **Date:** March 2026
 **Status:** Prototype
 
@@ -285,63 +285,89 @@ START
   |
   v
 +----------------------------------+
-| Add Items from Menu              |
-| - Search/browse thumbnails       |
-| - Apply modifiers                |
+| Choose Order Mode                |
+| - Standard Order                 |
+| - Open Table                     |
 +----------------------------------+
   |
-  v
-+----------------------------------+
-| Review Order                     |
-| - Edit quantities                |
-| - Add special instructions       |
-+----------------------------------+
+  +-------------------------------> STANDARD ORDER
+  |                                 |
+  |                                 v
+  |                      +----------------------------------+
+  |                      | Add Items from Menu              |
+  |                      +----------------------------------+
+  |                                 |
+  |                                 v
+  |                      +----------------------------------+
+  |                      | Review + Discounts + Fees        |
+  |                      +----------------------------------+
+  |                                 |
+  |                                 v
+  |                      +----------------------------------+
+  |                      | Send to Kitchen                  |
+  |                      +----------------------------------+
+  |                                 |
+  |                                 v
+  |                      +----------------------------------+
+  |                      | Pay Full -> Print Receipt        |
+  |                      +----------------------------------+
+  |                                 |
+  |                                 v
+  |                                END
   |
-  v
-+----------------------------------+
-| Apply Discounts?                 |
-| - % or fixed amount              |
-| - Item or order level            |
-| - Enter reason                   |
-+----------------------------------+
-  |
-  v
-+----------------------------------+
-| Add Additional Fees?             |
-| - Service charge                 |
-| - Packaging fee                  |
-| - Custom fees                    |
-+----------------------------------+
-  |
-  v
-+----------------------------------+
-| Send to Kitchen                  |
-+----------------------------------+
-  |
-  v
-+----------------------------------+
-| Select Payment Method            |
-| - Cash/Card/QRIS                 |
-| - E-wallet/BukuPay               |
-| - Split payment                  |
-+----------------------------------+
-  |
-  v
-+----------------------------------+
-| Process Payment                  |
-+----------------------------------+
-  |
-  v
-+----------------------------------+
-| Print Custom Receipt             |
-| - Header with logo               |
-| - Itemized order                 |
-| - Discounts & fees               |
-| - Custom footer                  |
-+----------------------------------+
-  |
-  v
-END
+  +-------------------------------> OPEN TABLE ORDER
+                                    |
+                                    v
+                         +----------------------------------+
+                         | Add Items from Menu              |
+                         +----------------------------------+
+                                    |
+                                    v
+                         +----------------------------------+
+                         | Review + Discounts + Fees        |
+                         +----------------------------------+
+                                    |
+                                    v
+                         +----------------------------------+
+                         | Send to Kitchen                  |
+                         +----------------------------------+
+                                    |
+                                    v
+                         +----------------------------------+
+                         | Keep Table OPEN                  |
+                         | Show running total + sessions    |
+                         +----------------------------------+
+                                    |
+                      +-------------+-------------+
+                      |                           |
+                      v                           v
+           +--------------------------+   +--------------------------+
+           | Add More Items           |   | Customer Wants to Pay    |
+           +--------------------------+   +--------------------------+
+                      |                           |
+                      +------------->-------------+
+                                    |
+                                    v
+                         +----------------------------------+
+                         | Select Payment Method            |
+                         | Full or Partial Payment          |
+                         +----------------------------------+
+                                    |
+                                    v
+                         +----------------------------------+
+                         | Remaining balance = 0 ?          |
+                         +----------------------------------+
+                                    |
+                         +----------+----------+
+                         |                     |
+                         v                     v
+              +----------------------+   +----------------------+
+              | Print Final Receipt  |   | Keep Table OPEN      |
+              | Close Table          |   | (balance remaining)  |
+              +----------------------+   +----------------------+
+                         |                     |
+                         v                     |
+                        END <------------------+
 ```
 
 **Order Types**
@@ -1755,6 +1781,7 @@ Acceptance criteria below are **product-level**: design and engineering must be 
 
 | Version | Date       | Author       | Changes                                                        |
 | ------- | ---------- | ------------ | -------------------------------------------------------------- |
+| 0.4     | March 2026 | Product Team | Integrated Open Table branch directly into the main Order Flow |
 | 0.3     | March 2026 | Product Team | Added visual ASCII tree charts for all Core Features sections  |
 | 0.2     | March 2026 | Product Team | Added table of contents with section anchor links              |
 | 1.1     | March 2026 | Product Team | Added UX Acceptance Criteria; deduplicated Report Filters list |
