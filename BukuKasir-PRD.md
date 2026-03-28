@@ -1,7 +1,7 @@
 # BukuKasir - Product Requirements Document (PRD)
 
 **Product Name:** BukuKasir
-**Version:** 0.2  
+**Version:** 0.3  
 **Date:** March 2026
 **Status:** Prototype
 
@@ -193,6 +193,49 @@ Menu
 - Tax Configuration: Inclusive/exclusive tax per item
 
 ### Table Management
+
+**Table Structure**
+
+```
+Outlet Floor Plan
+|
++-- Floor: Ground Floor
+|   |
+|   +-- Area: Indoor Dining
+|   |   |
+|   |   +-- Table T1 (4 seats, Regular)
+|   |   |   +-- Status: Available
+|   |   |   +-- Current Order: None
+|   |   |
+|   |   +-- Table T2 (6 seats, VIP)
+|   |   |   +-- Status: Occupied
+|   |   |   +-- Current Order: #1023 (Rp 450K)
+|   |   |   +-- Open Table Session: Active
+|   |   |
+|   |   +-- Table T3 (2 seats, Bar Counter)
+|   |       +-- Status: Reserved
+|   |
+|   +-- Area: Outdoor Terrace
+|       |
+|       +-- Table T4 (4 seats, Regular)
+|       +-- Table T5 (8 seats, Large Party)
+|
++-- Floor: 2nd Floor
+    |
+    +-- Area: Private Dining
+        |
+        +-- Table T6 (10 seats, VIP)
+        +-- Table T7 (4 seats, Regular)
+
+Table Status Lifecycle:
+Available --> Occupied --> [Open Table] --> Payment --> Available
+    |            |              |
+    v            v              v
+Reserved    Merged Tables   Partial Payment
+    |            |              |
+    v            v              v
+Cleaning   Split Bills    Transfer Table
+```
 
 **Table Features**
 
@@ -409,6 +452,49 @@ CUSTOMER READY TO PAY
 
 ### Transaction Customization
 
+**Transaction Structure**
+
+```
+Order Transaction
+|
++-- Subtotal (before adjustments)
+|   +-- Item 1: Rp 45,000
+|   +-- Item 2: Rp 60,000
+|   +-- Item 3: Rp 35,000
+|   = Rp 140,000
+|
++-- Discounts
+|   |
+|   +-- Item-Level Discounts
+|   |   +-- Item 1: -Rp 5,000 (10%)
+|   |
+|   +-- Order-Level Discounts
+|   |   +-- Subtotal Discount: -Rp 10,000 (10%)
+|   |   +-- Reason: Member Promo
+|   |
+|   = Total Discount: -Rp 15,000
+|
++-- Additional Fees
+|   |
+|   +-- Service Charge (PB1): +Rp 6,250 (5% after discount)
+|   +-- Packaging Fee: +Rp 3,000
+|   +-- Custom Fee (Delivery): +Rp 10,000
+|   |
+|   = Total Fees: +Rp 19,250
+|
++-- Tax (PPN 10%)
+|   +-- Calculated on: (Subtotal - Discounts + Fees)
+|   +-- Tax Amount: +Rp 14,425
+|
++-- GRAND TOTAL: Rp 158,675
+|
++-- Payment Split
+    |
+    +-- Payment 1: Cash Rp 100,000
+    +-- Payment 2: QRIS Rp 58,675
+    = Fully Paid
+```
+
 **Discounts**
 
 - Quick discount buttons: 5%, 10%, 15%, 20%
@@ -428,6 +514,47 @@ CUSTOMER READY TO PAY
 - Custom Fees: Admin can create custom fee types with names
 - Fee application: Before or after tax (configurable)
 - Fee visibility: Show as separate line items on receipt
+
+**Receipt Structure**
+
+```
+Printed Receipt (80mm/58mm Thermal)
+|
++-- HEADER (Customizable)
+|   +-- Logo Image (optional)
+|   +-- Business Name: Warung Makan Sari
+|   +-- Address: Jl. Sudirman No. 123, Jakarta
+|   +-- Phone: +62 812-3456-7890
+|   +-- Custom Text: "Terima Kasih Atas Kunjungan Anda"
+|
++-- ORDER DETAILS
+|   +-- Order #: 1024 | Table: T5
+|   +-- Staff: Budi | Date: 28 Mar 2026 14:30
+|   +-- --------------------------------
+|   +-- 2x Nasi Goreng     Rp 90,000
+|   +--    + Extra Egg     Rp 10,000
+|   +-- 1x Es Teh Manis    Rp 15,000
+|   +-- --------------------------------
+|
++-- FINANCIAL BREAKDOWN
+|   +-- Subtotal:          Rp 115,000
+|   +-- Discount (10%):     -Rp 11,500
+|   +-- Service Charge:    +Rp 5,175
+|   +-- Tax (PPN 10%):     +Rp 10,868
+|   +-- --------------------------------
+|   +-- TOTAL:             Rp 119,543
+|
++-- PAYMENT INFO
+|   +-- Method: Cash
+|   +-- Paid:              Rp 120,000
+|   +-- Change:            Rp 457
+|
++-- FOOTER (Customizable)
+    +-- Thank You Message
+    +-- Return Policy: "No returns after 24 hours"
+    +-- QR Code: [Feedback Survey]
+    +-- Social Media: @warungmakan.sari
+```
 
 **Receipt Customization**
 
@@ -453,6 +580,75 @@ CUSTOMER READY TO PAY
   - Email receipt option
 
 ### Payment Management
+
+**Payment Methods Hierarchy**
+
+```
+Payment Methods (Admin Configurable)
+|
++-- Standard Methods
+|   |
+|   +-- Cash
+|   |   +-- Enable/Disable: ON
+|   |   +-- Change Calculation: Auto
+|   |   +-- Round to nearest: Rp 100
+|   |   +-- Permission: Cashier+
+|   |
+|   +-- Card (EDC)
+|   |   +-- Enable/Disable: ON
+|   |   +-- Require Last 4 Digits: YES
+|   |   +-- Supported: Visa, Mastercard, JCB
+|   |   +-- Permission: Cashier+
+|   |
+|   +-- QRIS (Unified QR)
+|   |   +-- Enable/Disable: ON
+|   |   +-- Providers: GoPay, OVO, DANA, LinkAja
+|   |   +-- Auto-check payment status: YES
+|   |   +-- Permission: Cashier+
+|
++-- Digital Wallets
+|   |
+|   +-- BukuPay (Integrated)
+|   |   +-- Enable/Disable: ON
+|   |   +-- Show Balance: YES
+|   |   +-- Direct Deduction: YES
+|   |   +-- Permission: Cashier+
+|   |
+|   +-- External E-Wallets (Deep Link)
+|       +-- GoPay: ON
+|       +-- OVO: ON
+|       +-- DANA: ON
+|       +-- LinkAja: ON
+|
++-- Custom Methods (Created by Admin)
+|   |
+|   +-- Voucher
+|   |   +-- Icon: [Voucher Icon]
+|   |   +-- Require Reference: YES
+|   |   +-- Permission: Manager+
+|   |
+|   +-- Employee Meal
+|   |   +-- Icon: [Employee Icon]
+|   |   +-- Require PIN: YES
+|   |   +-- Permission: Manager+
+|   |
+|   +-- House Account (Credit)
+|       +-- Icon: [Account Icon]
+|       +-- Require Approval: YES
+|       +-- Permission: Owner only
+|
++-- Split Payment
+    +-- Enable Multiple Methods: YES
+    +-- Max Split: 3 methods
+    +-- Partial Payment: Supported
+
+Payment Method Priority (Display Order):
+1. Cash
+2. QRIS
+3. BukuPay
+4. Card
+5. Voucher
+```
 
 **Payment Method Customization (Admin)**
 
@@ -492,6 +688,66 @@ CUSTOMER READY TO PAY
 
 ### Staff Management
 
+**Staff Hierarchy & Access Control**
+
+```
+Business: Warung Makan Sari
+|
++-- Outlet: Main Branch (Jakarta)
+|   |
+|   +-- Staff Directory
+|   |   |
+|   |   +-- Owner (1)
+|   |   |   +-- Name: Pak Sari
+|   |   |   +-- Permissions: FULL ACCESS
+|   |   |   +-- Can: Manage all, delete business
+|   |   |   +-- Access: All outlets
+|   |   |
+|   |   +-- Manager (1)
+|   |   |   +-- Name: Ibu Dewi
+|   |   |   +-- Permissions: MENU, STAFF (non-owner), REPORTS, SETTINGS
+|   |   |   +-- Cannot: Delete business, manage owners
+|   |   |   +-- Access: Assigned outlets only
+|   |   |
+|   |   +-- Cashier (2)
+|   |   |   +-- Budi
+|   |   |   |   +-- Shift: Day (08:00-16:00)
+|   |   |   |   +-- PIN: ****
+|   |   |   |   +-- Permissions: Orders, Payments, Open Tables
+|   |   |   |   +-- Today Sales: Rp 2.4M (45 orders)
+|   |   |   |
+|   |   |   +-- Ani
+|   |   |       +-- Shift: Night (16:00-00:00)
+|   |   |       +-- PIN: ****
+|   |   |       +-- Permissions: Orders, Payments, Open Tables
+|   |   |       +-- Today Sales: Rp 1.8M (32 orders)
+|   |   |
+|   |   +-- Waiter (3)
+|   |   |   +-- Rudi, Siti, Joko
+|   |   |   +-- Permissions: Create orders, View tables
+|   |   |   +-- Cannot: Process payments
+|   |   |
+|   |   +-- Kitchen (2)
+|   |       +-- Chef Ahmad, Chef Maya
+|   |       +-- Permissions: View orders, Update status
+|   |       +-- KDS Access: Enabled
+|   |
+|   +-- Shift Schedule (Today)
+|       +-- Morning: Budi, Rudi, Siti, Chef Ahmad
+|       +-- Evening: Ani, Joko, Chef Maya
+|
++-- Outlet: Branch (Bandung)
+    +-- Manager: Pak Tono
+    +-- Cashier: 1 staff
+    +-- Waiter: 2 staff
+
+Staff Activity Audit Trail:
+[Timestamp] [Staff] [Action] [Order/Table] [Details]
+14:32:15    Budi    Order Created   T5      Rp 150K
+14:45:22    Ani     Discount Applied T3     10% - Manager Approved
+15:10:05    Budi    Payment Received T5      Cash Rp 150K
+```
+
 **Staff Features**
 
 - Staff Profiles: Name, role, contact, PIN code
@@ -507,6 +763,95 @@ CUSTOMER READY TO PAY
 - Reset PIN codes
 
 ### Reporting & Analytics
+
+**Reports Structure**
+
+```
+Reporting Dashboard
+|
++-- Sales Performance
+|   |
+|   +-- Daily Sales Summary
+|   |   +-- Revenue: Rp 25.5M (Today)
+|   |   +-- Orders: 487
+|   |   +-- AOV: Rp 52,360
+|   |   +-- vs Yesterday: +12%
+|   |
+|   +-- Hourly Sales Heatmap
+|   |   +-- Peak: 12:00-13:00 (Rp 4.2M)
+|   |   +-- Low: 15:00-16:00 (Rp 800K)
+|   |
+|   +-- Category Performance
+|   |   +-- Food: 65% (Rp 16.6M)
+|   |   +-- Beverages: 25% (Rp 6.4M)
+|   |   +-- Desserts: 10% (Rp 2.5M)
+|   |
+|   +-- Staff Performance
+|       +-- Top: Budi - Rp 8.2M (156 orders)
+|       +-- Avg: Rp 6.4M per cashier
+|
++-- Financial Analysis
+|   |
+|   +-- Revenue Breakdown
+|   |   +-- Gross Revenue: Rp 25.5M
+|   |   +-- Discounts: -Rp 1.8M (7%)
+|   |   +-- Net Revenue: Rp 23.7M
+|   |
+|   +-- Payment Method Mix
+|   |   +-- Cash: 35% (Rp 8.9M)
+|   |   +-- QRIS: 40% (Rp 10.2M)
+|   |   +-- Card: 15% (Rp 3.8M)
+|   |   +-- BukuPay: 10% (Rp 2.6M)
+|   |
+|   +-- Tax Reporting (PPN)
+|       +-- Taxable Revenue: Rp 21.5M
+|       +-- Tax Collected: Rp 2.15M
+|       +-- Service Charge (PB1): Rp 1.2M
+|
++-- Discounts & Fees Analysis
+|   |
+|   +-- Discounts Given
+|   |   +-- Total: Rp 1.8M across 124 orders
+|   |   +-- By Type: Member 60%, Promo 30%, Other 10%
+|   |   +-- By Staff: Budi Rp 800K, Ani Rp 600K, Manager Rp 400K
+|   |   +-- Top Reasons: Member Benefit, Happy Hour, Complaint Resolution
+|   |
+|   +-- Additional Fees
+|       +-- Service Charge: Rp 1.2M (all dine-in)
+|       +-- Packaging: Rp 450K (takeaway orders)
+|       +-- Delivery: Rp 320K (delivery orders)
+|
++-- Menu Analytics
+|   |
+|   +-- Top Selling Items
+|   |   +-- 1. Nasi Goreng Special - 156 sold
+|   |   +-- 2. Es Teh Manis - 142 sold
+|   |   +-- 3. Ayam Bakar - 98 sold
+|   |
+|   +-- Slow Moving Items
+|   |   +-- 1. Salad Caesar - 3 sold (flagged)
+|   |   +-- 2. Soup Tomato - 5 sold (review needed)
+|   |
+|   +-- Modifier Analysis
+|       +-- Extra Egg: 45% of applicable orders
+|       +-- Extra Spicy: 30% of applicable orders
+|       +-- No MSG: 15% of applicable orders
+|
++-- Open Table Metrics
+|   |
+|   +-- Active Tables (Now)
+|   |   +-- 8 tables occupied
+|   |   +-- Running totals: Rp 1.2M combined
+|   |   +-- Avg session time: 45 minutes
+|   |
+|   +-- Historical Analysis
+|       +-- Avg orders per table: 2.3 sessions
+|       +-- Partial payment rate: 12% of open tables
+|       +-- Table turnover rate: 6.2 per day
+
+Report Filters Available:
+[Date Range] [Outlet] [Staff] [Payment Method] [Open Table Status] [Export: PDF/Excel]
+```
 
 **Sales Reports**
 
@@ -1410,6 +1755,7 @@ Acceptance criteria below are **product-level**: design and engineering must be 
 
 | Version | Date       | Author       | Changes                                                        |
 | ------- | ---------- | ------------ | -------------------------------------------------------------- |
+| 0.3     | March 2026 | Product Team | Added visual ASCII tree charts for all Core Features sections  |
 | 0.2     | March 2026 | Product Team | Added table of contents with section anchor links              |
 | 1.1     | March 2026 | Product Team | Added UX Acceptance Criteria; deduplicated Report Filters list |
 | 1.0     | March 2025 | Product Team | Initial PRD                                                    |
