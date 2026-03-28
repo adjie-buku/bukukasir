@@ -1,7 +1,7 @@
 # BukuKasir - Product Requirements Document (PRD)
 
 **Product Name:** BukuKasir
-**Version:** 0.0.10  
+**Version:** 0.0.12  
 **Date:** March 2026
 **Status:** Prototype
 
@@ -128,8 +128,8 @@ User Account (BukuPay/BukuKasir)
 **User Authentication**
 
 - Single Sign-On (SSO) with BukuPay
-- Phone number/Email-based authentication
-- OTP verification
+- Phone number-based authentication only
+- OTP verification via SMS or WhatsApp (WA)
 - Biometric authentication (optional for Cashier App)
 
 **User Roles & Permissions**
@@ -141,7 +141,7 @@ User Account (BukuPay/BukuKasir)
 | Manager | Menu management with thumbnail uploads and AI generation, staff management (except owner), customize payment methods, configure receipt templates, view reports, cannot delete business                           |
 | Cashier | Process orders, manage open tables (add orders, partial payments), apply discounts and additional fees, process payments with method selection, print custom receipts, view assigned tables, view limited reports |
 | Kitchen | View incoming orders on KDS tablet, update prep status (New/Preparing/Ready), monitor queue by station, trigger reprint of kitchen tickets                                                                        |
-| Waiter  | Create orders, view tables, add to open tables, cannot process payments                                                                                                                                           |
+| Waiter  | Create orders, view tables, add to open tables, can only view/edit orders created by themselves, cannot process payments                                                                                            |
 
 
 ## Core Features
@@ -395,6 +395,7 @@ START
 - Kitchen Dispatch:
   - Standard order: Auto-dispatch to kitchen only after payment success (auto print enabled)
   - Open table order: Manual "Send to Kitchen" per order session (auto print enabled)
+- Waiter Scope Rule: Waiter can only see and modify orders created by their own account; cashier/manager can view all orders
 
 **Kitchen Fulfillment Workflow (KDS + Auto Print)**
 
@@ -1061,6 +1062,7 @@ Report Filters Available:
 - Open Table Continuation: Add more items to occupied tables in <= 2 taps
 - Bill Request: Mark table as "Ready to Pay" for cashier handoff
 - No Payment Controls: Waiter role cannot see `PAY NOW` or payment method actions
+- My Orders Only: Waiter only sees order cards/sessions created by their account (self-owned orders)
 
 **Open Table User Scenarios**
 
@@ -1455,7 +1457,7 @@ All staff can see table status and add orders
 
 User
 
-- id, email, phone, name, created_at
+- id, phone, name, created_at
 - Businesses[] (many-to-many)
 
 Business
@@ -1604,20 +1606,6 @@ Staff
 - Role-based access control (RBAC)
 - PIN protection for frontline app (cashier and kitchen roles)
 - Session timeout (configurable)
-
-**Data Protection**
-
-- SSL/TLS encryption for all communications
-- Sensitive data encryption at rest
-- PCI DSS compliance for card data
-- Regular security audits
-
-**Audit Trail**
-
-- Log all critical operations including discounts and fee applications
-- Immutable transaction records
-- Staff action tracking
-- Data change history
 
 ## Performance Requirements
 
@@ -1822,6 +1810,8 @@ Use a concise KPI set focused on product health and operational impact:
 
 | Version | Date       | Author       | Changes                                                                           |
 | ------- | ---------- | ------------ | --------------------------------------------------------------------------------- |
+| 0.0.12  | March 2026 | Product Team | Authentication updated to phone-only with SMS/WhatsApp OTP (no email auth)       |
+| 0.0.11  | March 2026 | Product Team | Removed Data Protection and Audit Trail sections; waiter now limited to own orders |
 | 0.0.10  | March 2026 | Product Team | Removed Roadmap section and simplified Success Metrics KPI list                  |
 | 0.0.9   | March 2026 | Product Team | Added dedicated waiter interface (role-based, no payment access) in frontline app |
 | 0.0.8   | March 2026 | Product Team | Added optional PPN config, mandatory report charts, and real-time multi-user sync requirements |
