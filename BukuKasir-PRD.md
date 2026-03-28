@@ -1,7 +1,7 @@
 # BukuKasir - Product Requirements Document (PRD)
 
 **Product Name:** BukuKasir
-**Version:** 0.0.31  
+**Version:** 0.0.32  
 **Date:** March 2026
 **Status:** Prototype
 
@@ -634,7 +634,7 @@ Order Transaction
 +-- Payment Split
     |
     +-- Payment 1: Cash Rp 100,000
-    +-- Payment 2: QRIS Rp 58,675
+    +-- Payment 2: QRIS (custom label) Rp 58,675
     = Fully Paid
 ```
 
@@ -893,9 +893,9 @@ Reporting Dashboard
 |   |
 |   +-- Payment Method Mix
 |   |   +-- Cash: 35% (Rp 8.9M)
-|   |   +-- QRIS: 40% (Rp 10.2M)
-|   |   +-- Card: 15% (Rp 3.8M)
-|   |   +-- BukuPay: 10% (Rp 2.6M)
+|   |   +-- QRIS (custom label): 40% (Rp 10.2M)
+|   |   +-- EDC (custom label): 15% (Rp 3.8M)
+|   |   +-- BukuPay (custom label): 10% (Rp 2.6M)
 |   |
 |   +-- Tax Reporting (PPN)
 |       +-- Taxable Revenue: Rp 21.5M
@@ -950,7 +950,7 @@ Report Filters Available:
 **Sales Reports**
 
 - Daily Sales Summary: Total revenue, order count, average order value
-- Payment Method Breakdown: Cash vs non-cash ratio
+- Payment Method Breakdown: Cash vs custom method labels ratio
 - Hourly Sales: Peak hours identification
 - Category Performance: Sales by menu category
 - Staff Performance: Sales by cashier/server
@@ -1631,7 +1631,6 @@ Acceptance criteria below are **product-level**: design and engineering must be 
 **Hardware & connectivity**
 
 - Printer unavailable: Blocking banner on payment/receipt steps with actionable steps (retry, select printer, print later if policy allows); never silent failure after “Payment successful.”
-- EDC / QRIS timeout: Clear timeout message, retry, and alternate method suggestion without losing order totals.
 - Bluetooth peripheral drop: User sees connection status and reconnect affordance from the screen where printing or card flow is triggered.
 - Low battery / offline: Persistent indicator; when offline, queued actions and sync backlog are visible; staff can end shift only per policy (with warning if data not synced).
 
@@ -1730,17 +1729,14 @@ Use a concise KPI set focused on product health and operational impact:
 
 **References**
 
-- BukuPay API Documentation
-- Indonesian Tax Regulations
-- PCI DSS Compliance Guidelines
-- Android Development Best Practices
-- ESC/POS Printer Commands
+-
 
 **Document History**
 
 
 | Version | Date       | Author       | Changes                                                                                        |
 | ------- | ---------- | ------------ | ---------------------------------------------------------------------------------------------- |
+| 0.0.32  | March 2026 | Product Team | Clarified reporting payment mix uses custom labels for non-cash methods                       |
 | 0.0.31  | March 2026 | Product Team | Set payment defaults to Cash-only; all non-cash methods must be user-added custom labels     |
 | 0.0.30  | March 2026 | Product Team | Finalized payment alignment by removing bank-specific method entries from uniform model       |
 | 0.0.29  | March 2026 | Product Team | Aligned all payment sections to uniform record-only method model across app/back office/docs  |
