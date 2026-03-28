@@ -1,7 +1,7 @@
 # BukuKasir - Product Requirements Document (PRD)
 
 **Product Name:** BukuKasir
-**Version:** 0.0.25  
+**Version:** 0.0.31  
 **Date:** March 2026
 **Status:** Prototype
 
@@ -658,12 +658,10 @@ Order Transaction
 - Fee application: Before or after tax (configurable)
 - Fee visibility: Show as separate line items on receipt
 
-**Receipt structure (cashier / customer)**
-
-Printed at the cashier after payment (or on demand as bill preview where applicable). Same layout is used for **customer copy** and **merchant copy**; optional **kitchen copy** is a shortened variant (see Kitchen ticket structure below).
+**Receipt Structure**
 
 ```
-Customer receipt (80mm/58mm thermal)
+Printed Receipt (80mm/58mm Thermal)
 |
 +-- HEADER (Customizable)
 |   +-- Logo Image (optional)
@@ -701,41 +699,6 @@ Customer receipt (80mm/58mm thermal)
     +-- Social Media: @warungmakan.sari
 ```
 
-**Kitchen ticket structure (kitchen printer)**
-
-Printed when order is sent to kitchen (or auto-printed after payment on standard orders per flow). Uses the same **58mm or 80mm** thermal width as configured for kitchen printers; layout is **operation-focused** (no prices unless business enables “show prices on kitchen ticket”).
-
-```
-Kitchen ticket (58mm/80mm thermal, ESC/POS)
-|
-+-- TICKET HEADER
-|   +-- Ticket #: K-1042
-|   +-- Fired at: 14:32
-|   +-- Order #: 1024 | Session: 2 (if open table)
-|   +-- Table: T5 | Dine-in / Takeaway
-|   +-- Station: HOT KITCHEN (from printer routing)
-|
-+-- ITEMS (line per item)
-|   +-- 2x Nasi Goreng
-|   |   +-- Modifiers: Extra Egg, Extra Spicy
-|   +-- 1x Es Teh Manis
-|   |   +-- Note: Less ice
-|   +-- --------------------------------
-|
-+-- TICKET FOOTER (minimal)
-    +-- Staff: Budi (optional, toggle)
-    +-- Special instructions (order-level, if any)
-```
-
-**Print layout rules (summary)**
-
-| Output | Primary user | Typical content |
-| ------ | ------------ | --------------- |
-| Customer receipt | Guest / cashier | Header, full line items, financial breakdown, payment, change, footer |
-| Merchant copy | Store | Same as customer or duplicate with “MERCHANT” marker (configurable) |
-| Kitchen ticket | Kitchen | Table/session, station, items, modifiers, notes; prices optional |
-| Kitchen copy on receipt printer | Kitchen pass-through | Subset of customer receipt or duplicate ticket (follows receipt “kitchen copy” setting) |
-
 **Receipt Customization**
 
 - Custom Header:
@@ -750,15 +713,33 @@ Kitchen ticket (58mm/80mm thermal, ESC/POS)
   - Return/refund policy
   - Terms and conditions
   - Promotional messages
-  - QR code for feedback/survey
   - Custom text (unlimited lines)
 - Receipt Settings:
-  - Paper size (58mm or 80mm thermal printer; applies per printer profile where configured)
+  - Paper size (58mm or 80mm thermal printer)
   - Font size options
   - Show/hide fields (tax breakdown, staff name, order time)
-  - Kitchen ticket: show prices (on/off)
   - Duplicate receipt option
-  - Email receipt option
+
+**Kitchen Ticket Template (Kitchen Print Design)**
+
+```
+Kitchen Ticket (58mm/80mm Thermal)
+|
++-- HEADER
+|   +-- Ticket Type: NEW / REPRINT
+|
++-- ORDER CONTEXT
+|   +-- Table: T5
+|   +-- Session: #2 (Open Table)
+|   +-- Ticket Time: 14:32
+|   +-- Created By: Waiter Rudi
+|
++-- ITEMS TO PREPARE
+|   +-- 2x Nasi Goreng
+|   |   +-- Modifier: Extra Egg
+|   |   +-- Note: Less spicy
+|   +-- 1x Es Teh Manis
+```
 
 ### Payment Management
 
@@ -767,37 +748,15 @@ Kitchen ticket (58mm/80mm thermal, ESC/POS)
 ```
 Payment Methods (Admin Configurable)
 |
-+-- Standard Methods
-|   |
++-- Method List (Uniform Configuration)
 |   +-- Cash
-|   |   +-- Enable/Disable: ON
-|   |   +-- Change Calculation: Auto
-|   |   +-- Round to nearest: Rp 100
-|   |   +-- Permission: Cashier+
-|   |
-|   +-- Card (Manual Record)
-|   |   +-- Enable/Disable: ON
-|   |   +-- Optional Reference: Last 4 Digits / Approval Code
-|   |   +-- Permission: Cashier+
-|   |
-|   +-- QRIS (Manual Record)
-|   |   +-- Enable/Disable: ON
-|   |   +-- Providers: GoPay, OVO, DANA, LinkAja
-|   |   +-- Manual Confirmation: YES
-|   |   +-- Permission: Cashier+
+|   +-- Custom (user-defined)
 |
-+-- Digital Wallets (Manual Record)
-|   |
-|   +-- BukuPay
-|   |   +-- Enable/Disable: ON
-|   |   +-- Optional Reference Number
-|   |   +-- Permission: Cashier+
-|   |
-|   +-- External E-Wallets
-|       +-- GoPay: ON
-|       +-- OVO: ON
-|       +-- DANA: ON
-|       +-- LinkAja: ON
++-- Uniform Settings For Every Method
+|   +-- Enable/Disable
+|   +-- Display Name
+|   +-- Optional Reference Number
+|   +-- Display Order
 |
 +-- Custom Methods (Created by Admin)
 |   |
@@ -814,35 +773,25 @@ Payment Methods (Admin Configurable)
 
 Payment Method Priority (Display Order):
 1. Cash
-2. QRIS
-3. BukuPay
-4. Card
-5. Custom (free text)
+2. Custom (user-defined)
 ```
 
 **Payment Method Customization (Admin)**
 
 - Enable/Disable Methods: Toggle payment methods on/off
 - Custom Payment Method: Free text input (user can type any method name)
-- Payment Method Settings:
+- Uniform Method Settings (applies to all methods):
   - Display name customization
   - Default payment method
-  - Require reference number (for tracking)
+  - Require reference number (optional)
 - Payment Method Ordering: Drag to reorder display priority
-- Method-Specific Settings:
-  - Cash: Enable/disable change calculation
-  - Card: Require optional reference input (last 4 digits / approval code)
-  - E-wallet: Record transaction reference manually
-  - BukuPay: Record as payment type only (no wallet check/deduction)
+- No method-specific columns/settings; all methods use the same configuration model
 
 **Payment Methods Available**
 
-- Cash: With automatic change calculation
-- Card: Credit/Debit card (manual record)
-- QRIS: Manual record of QRIS payment
-- E-wallets: GoPay, OVO, DANA, LinkAja
-- BukuPay: Payment label for bookkeeping (manual record)
-- Custom Method: Free text label (any value typed by user)
+- Any admin-defined method name (manual record only)
+- Preconfigured by system: Cash only
+- Other methods are user-added custom labels (e.g., QRIS, EDC, Transfer, BukuPay)
 - Split Payment: Multiple methods for single transaction
 
 **Payment Features**
@@ -1252,18 +1201,13 @@ All staff can see table status and add orders
   v
 +----------------------------------+
 | Select Payment Method            |
-| [Cash] [Card] [QRIS]             |
-| [GoPay] [OVO] [BukuPay]          |
+| [Cash] [Custom]                  |
 | [Split Payment]                  |
 +----------------------------------+
   |
   +---> Cash ----------------------> Enter Amount -> Calculate Change -> Confirm
   |
-  +---> Card ----------------------> Enter Amount + Optional Ref -> Confirm
-  |
-  +---> QRIS/E-wallet -------------> Enter Amount + Optional Ref -> Confirm
-  |
-  +---> BukuPay -------------------> Enter Amount + Optional Ref -> Confirm
+  +---> Any Non-Cash Method -------> Enter Amount + Optional Ref -> Confirm
   |
   +---> Split Payment -------------> Select Method 1 (Amount) -> Select Method 2 (Amount) -> Confirm
   |
@@ -1323,6 +1267,7 @@ All staff can see table status and add orders
 - Global Settings
   - Payment Method Settings
   - Receipt Configuration
+  - Kitchen Print Settings
   - Discount Settings
   - Additional Fee Settings
   - Staff Administration
@@ -1336,8 +1281,9 @@ All staff can see table status and add orders
 | Dashboard                                          | Revenue overview, active orders, recent transactions, quick actions, sales trend                      |
 | Menu Configuration                                 | Menu editor, thumbnail upload/AI generation, scheduling, import/export, item analytics                |
 | Reports Center                                     | Interactive charts, drill-down analytics, scheduled report emails, export                             |
-| Global Settings > Payment Method Settings          | Enable/disable methods, custom methods, display order, permissions, references, default method        |
-| Global Settings > Receipt Configuration            | Header/footer editor, cashier receipt layout/toggles, kitchen ticket layout (e.g. prices on/off), paper/font, auto-print, duplicate copies |
+| Global Settings > Payment Method Settings          | Enable/disable methods, custom methods, uniform settings, display order, references, default method    |
+| Global Settings > Receipt Configuration            | Header/footer editor, receipt layout/toggles, paper/font, auto-print, duplicate copies                |
+| Global Settings > Kitchen Print Settings           | Kitchen ticket template, ticket fields, auto-print and reprint settings                                 |
 | Global Settings > Discount Settings                | Preset discounts, role limits, approval thresholds, discount reason categories                        |
 | Global Settings > Additional Fee Settings          | Service/packaging/custom fee setup, fee calculation rules, fee display options                        |
 | Global Settings > Staff Administration             | Staff directory, role assignment, permission setup                                                    |
@@ -1374,13 +1320,12 @@ All staff can see table status and add orders
 Inside `Global Settings`, the available configuration menus are:
 
 - Payment Method Settings
-  - Enable/disable standard payment methods
+  - Enable/disable payment methods
   - Create custom payment methods
-  - Upload payment method icons
   - Configure payment method display order
-  - Set permissions (which staff roles can use)
-  - Configure reference number requirements
+  - Configure optional reference number
   - Set default payment method
+  - Apply one uniform setting model to all methods (no method-specific columns)
 - Receipt Configuration
   - Header Editor:
     - Logo upload (max resolution, auto-resize)
@@ -1393,12 +1338,16 @@ Inside `Global Settings`, the available configuration menus are:
     - QR code generator for feedback/social media
     - Terms and policy text
   - Receipt Settings:
-    - Paper size selection (58mm/80mm) for cashier and kitchen printers
+    - Paper size selection (58mm/80mm)
     - Font size adjustment
-    - Toggle fields on/off (customer receipt)
-    - Kitchen ticket: show item prices (on/off; default off)
+    - Toggle fields on/off
     - Auto-print after payment toggle
-    - Duplicate copy options (customer / merchant / kitchen copy)
+    - Duplicate copy options
+- Kitchen Print Settings
+  - Kitchen ticket template editor
+  - Show/hide ticket fields (table, session, staff, notes)
+  - Auto-print on send-to-kitchen toggle
+  - Reprint marker and duplicate handling
 - Discount Settings
   - Preset discount values configuration
   - Maximum discount limit per role
@@ -1517,6 +1466,7 @@ Inside `Global Settings`, the available configuration menus are:
 - Auto-detection of printers
 - Print queue management
 - Template customization with header/footer
+- Dedicated kitchen ticket template customization (separate from customer receipt template)
 - Support for 58mm and 80mm paper widths
 - Auto-print kitchen tickets when order is sent to kitchen
 - Reprint API/action support from cashier and kitchen interfaces
@@ -1791,7 +1741,13 @@ Use a concise KPI set focused on product health and operational impact:
 
 | Version | Date       | Author       | Changes                                                                                        |
 | ------- | ---------- | ------------ | ---------------------------------------------------------------------------------------------- |
-| 0.0.25  | March 2026 | Product Team | Documented cashier vs kitchen print layout (receipt structure + kitchen ticket structure)      |
+| 0.0.31  | March 2026 | Product Team | Set payment defaults to Cash-only; all non-cash methods must be user-added custom labels     |
+| 0.0.30  | March 2026 | Product Team | Finalized payment alignment by removing bank-specific method entries from uniform model       |
+| 0.0.29  | March 2026 | Product Team | Aligned all payment sections to uniform record-only method model across app/back office/docs  |
+| 0.0.28  | March 2026 | Product Team | Simplified payment method configuration to one uniform model for all methods                 |
+| 0.0.27  | March 2026 | Product Team | Removed kitchen flags from ticket template when not available during order                     |
+| 0.0.26  | March 2026 | Product Team | Simplified kitchen ticket design: removed business name, station name, and footer             |
+| 0.0.25  | March 2026 | Product Team | Added explicit kitchen ticket design and Back Office Kitchen Print Settings configuration      |
 | 0.0.24  | March 2026 | Product Team | Refactored model to Business=Outlet (removed separate outlet context references)              |
 | 0.0.23  | March 2026 | Product Team | Added explicit Void Reporting Rules under Reporting & Analytics                                |
 | 0.0.22  | March 2026 | Product Team | Removed SSO references; auth now explicitly OTP (SMS/WA) + PIN only                            |
