@@ -1,7 +1,7 @@
 # BukuKasir - Product Requirements Document (PRD)
 
 **Product Name:** BukuKasir
-**Version:** 0.0.13  
+**Version:** 0.0.18  
 **Date:** March 2026
 **Status:** Prototype
 
@@ -989,6 +989,23 @@ Report Filters Available:
 - Kitchen role (KDS): ticket queue, prep status controls, station filtering, reprint kitchen ticket
 - Managers can optionally switch between cashier, waiter, and kitchen views (permission-based)
 
+**App Menu Quick Reference by Persona**
+
+| Persona | Menu / Screen | Information Available |
+| ------- | ------------- | --------------------- |
+| Cashier | Table Grid | Table status, occupancy, running totals, takeaway/delivery shortcuts |
+| Cashier | Menu Interface | Categories, item cards, thumbnails, variants/modifiers, item prices |
+| Cashier | Current Order | Order lines, notes/modifiers, subtotal, discount, fees, tax, total |
+| Cashier | Quick Actions | Void/hold, discount, additional fee, print bill |
+| Cashier | Payment Screen | Payment methods, split payment input, payment confirmation, receipt trigger |
+| Waiter | My Tables / Table Service | Assigned/visible tables, status, seat capacity, open-table indicators |
+| Waiter | Menu Entry | Items, modifiers, notes, send-to-kitchen action |
+| Waiter | My Orders | Only orders/sessions created by logged-in waiter, own order history |
+| Waiter | Bill Request | Mark table as ready-to-pay for cashier handoff |
+| Kitchen | KDS Queue | New/preparing/ready tickets grouped by station and order time |
+| Kitchen | Ticket Detail | Table/session, items, modifiers, notes, fire time |
+| Kitchen | KDS Actions | Start preparing, mark ready, reprint kitchen ticket, sync status |
+
 **Screen Layout**
 
 ```
@@ -1201,6 +1218,33 @@ All staff can see table status and add orders
 
 ## Back Office (Web)
 
+**Back Office Navigation (Explicit Menu Structure)**
+
+- Dashboard
+- Menu Configuration
+- Reports Center
+- Global Settings
+  - Payment Method Settings
+  - Receipt Configuration
+  - Discount Settings
+  - Additional Fee Settings
+  - Staff Administration
+  - Business & Outlet Settings
+
+**Back Office Menu Quick Reference**
+
+| Menu | Information Available |
+| ---- | --------------------- |
+| Dashboard | Revenue overview, active orders, recent transactions, quick actions, sales trend |
+| Menu Configuration | Menu editor, thumbnail upload/AI generation, scheduling, import/export, item analytics |
+| Reports Center | Interactive charts, drill-down analytics, scheduled report emails, export |
+| Global Settings > Payment Method Settings | Enable/disable methods, custom methods, display order, permissions, references, default method |
+| Global Settings > Receipt Configuration | Header/footer editor, receipt layout/toggles, paper/font, auto-print, duplicate copies |
+| Global Settings > Discount Settings | Preset discounts, role limits, approval thresholds, discount reason categories |
+| Global Settings > Additional Fee Settings | Service/packaging/custom fee setup, fee calculation rules, fee display options |
+| Global Settings > Staff Administration | Staff directory, role assignment, permission setup |
+| Global Settings > Business & Outlet Settings | Business profile, outlet settings, tax configuration (optional PPN), printer and integration settings |
+
 **Dashboard**
 
 - Revenue overview (today, this week, this month)
@@ -1225,68 +1269,61 @@ All staff can see table status and add orders
 - Menu scheduling (breakfast/lunch/dinner menus)
 - Menu item analytics with thumbnail view
 
-**Payment Method Settings**
+**Global Settings**
 
-- Enable/disable standard payment methods
-- Create custom payment methods
-- Upload payment method icons
-- Configure payment method display order
-- Set permissions (which staff roles can use)
-- Configure reference number requirements
-- Set default payment method
+Inside `Global Settings`, the available configuration menus are:
 
-**Receipt Configuration**
-
-- Header Editor:
-  - Logo upload (max resolution, auto-resize)
-  - Business information fields
-  - Custom text areas (up to 5 lines)
-  - Preview mode
-- Footer Editor:
-  - Template messages
-  - Custom text (up to 10 lines)
-  - QR code generator for feedback/social media
-  - Terms and policy text
-- Receipt Settings:
-  - Paper size selection (58mm/80mm)
-  - Font size adjustment
-  - Toggle fields on/off
-  - Auto-print after payment toggle
-  - Duplicate copy options
-
-**Discount Settings**
-
-- Preset discount values configuration
-- Maximum discount limit per role
-- Approval requirements by threshold
-- Discount reason categories
-- Disable discounts toggle
-
-**Additional Fee Settings**
-
-- Service charge configuration (default percentage)
-- Packaging fee options
-- Custom fee type creation
-- Fee calculation rules (before/after tax)
-- Fee display options
-
-**Staff Administration**
-
-- Staff directory
-- Role assignment
-- Permission customization
-
-**Settings**
-
-- Business profile
-- Outlet settings
-- Tax configuration:
-  - PPN toggle (enable/disable per outlet; optional)
-  - PPN rate setting (active only when enabled)
-  - Inclusive/exclusive mode
-  - Tax label on receipt (show/hide)
-- Printer configuration
-- Integration settings
+- Payment Method Settings
+  - Enable/disable standard payment methods
+  - Create custom payment methods
+  - Upload payment method icons
+  - Configure payment method display order
+  - Set permissions (which staff roles can use)
+  - Configure reference number requirements
+  - Set default payment method
+- Receipt Configuration
+  - Header Editor:
+    - Logo upload (max resolution, auto-resize)
+    - Business information fields
+    - Custom text areas (up to 5 lines)
+    - Preview mode
+  - Footer Editor:
+    - Template messages
+    - Custom text (up to 10 lines)
+    - QR code generator for feedback/social media
+    - Terms and policy text
+  - Receipt Settings:
+    - Paper size selection (58mm/80mm)
+    - Font size adjustment
+    - Toggle fields on/off
+    - Auto-print after payment toggle
+    - Duplicate copy options
+- Discount Settings
+  - Preset discount values configuration
+  - Maximum discount limit per role
+  - Approval requirements by threshold
+  - Discount reason categories
+  - Disable discounts toggle
+- Additional Fee Settings
+  - Service charge configuration (default percentage)
+  - Packaging fee options
+  - Custom fee type creation
+  - Fee calculation rules (before/after tax)
+  - Fee display options
+- Staff Administration
+  - Staff directory
+  - Role assignment
+  - Permission customization
+- Business & Outlet Settings
+  - Business profile
+  - Outlet settings
+  - Tax configuration:
+    - PPN toggle (enable/disable per outlet; optional)
+    - PPN rate setting (active only when enabled)
+    - Inclusive/exclusive mode
+    - Tax label on receipt (show/hide)
+  - Printer configuration
+  - Integration settings
 
 **Reports Center**
 
@@ -1311,16 +1348,18 @@ All staff can see table status and add orders
 - Framework: React Native (Expo)
 - Programming Language: TypeScript
 - Local Storage: SQLite/AsyncStorage
+- UI Components: Tamagui for cross-platform app interface
 - Key Libraries:
   - Expo Router / React Navigation
   - TanStack Query for API state
+  - Tamagui
   - Expo Notifications for push notifications
   - Thermal printer SDK (ESC/POS)
 
 **Back Office (Web)**
 
 - Framework: TanStack stack (React + TanStack Router + TanStack Query)
-- UI Library: Material-UI or Ant Design
+- UI Library: shadcn/ui
 - State Management: TanStack Query
 - Charts: Chart.js or D3.js
 - Image Upload: Image compression and optimization
@@ -1809,6 +1848,11 @@ Use a concise KPI set focused on product health and operational impact:
 
 | Version | Date       | Author       | Changes                                                                           |
 | ------- | ---------- | ------------ | --------------------------------------------------------------------------------- |
+| 0.0.18  | March 2026 | Product Team | Added app menu quick reference table by persona (cashier, waiter, kitchen)       |
+| 0.0.17  | March 2026 | Product Team | Added explicit Back Office menu quick reference table under Back Office section   |
+| 0.0.16  | March 2026 | Product Team | Consolidated Back Office setting menus under explicit Global Settings group       |
+| 0.0.15  | March 2026 | Product Team | Switched app UI component stack from Material to Tamagui                         |
+| 0.0.14  | March 2026 | Product Team | Updated UI libraries: shadcn/ui for web and Material components for app          |
 | 0.0.13  | March 2026 | Product Team | Updated stack: React Native Expo app, TanStack web, backend Golang/Java with REST API |
 | 0.0.12  | March 2026 | Product Team | Authentication updated to phone-only with SMS/WhatsApp OTP (no email auth)       |
 | 0.0.11  | March 2026 | Product Team | Removed Data Protection and Audit Trail sections; waiter now limited to own orders |
