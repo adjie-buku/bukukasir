@@ -1,7 +1,7 @@
 # BukuKasir - Product Requirements Document (PRD)
 
 **Product Name:** BukuKasir
-**Version:** 0.0.23  
+**Version:** 0.0.24  
 **Date:** March 2026
 **Status:** Prototype
 
@@ -204,14 +204,14 @@ Menu
 - Variants: Size options, portion options with different pricing
 - Availability Toggle: Mark items as available/unavailable
 - Printer Routing: Assign items to specific kitchen printers
-- Tax Configuration: Inclusive/exclusive tax per item with optional global PPN toggle per outlet
+- Tax Configuration: Inclusive/exclusive tax per item with optional global PPN toggle per business
 
 ### Table Management
 
 **Table Structure**
 
 ```
-Outlet Floor Plan
+Business Floor Plan
 |
 +-- Floor: Ground Floor
 |   |
@@ -821,50 +821,40 @@ Payment Method Priority (Display Order):
 **Staff Hierarchy & Access Control**
 
 ```
-Business: Warung Makan Sari
+Business: Warung Makan Sari (single operating unit)
 |
-+-- Outlet: Main Branch (Jakarta)
++-- Staff Directory
 |   |
-|   +-- Staff Directory
+|   +-- Owner (1)
+|   |   +-- Name: Pak Sari
+|   |   +-- Permissions: FULL ACCESS
+|   |   +-- Can: Manage all, delete business
+|   |
+|   +-- Manager (1)
+|   |   +-- Name: Ibu Dewi
+|   |   +-- Permissions: MENU, STAFF (non-owner), REPORTS, SETTINGS
+|   |   +-- Cannot: Delete business, manage owners
+|   |
+|   +-- Cashier (2)
+|   |   +-- Budi
+|   |   |   +-- PIN: ****
+|   |   |   +-- Permissions: Orders, Payments, Open Tables
+|   |   |   +-- Today Sales: Rp 2.4M (45 orders)
 |   |   |
-|   |   +-- Owner (1)
-|   |   |   +-- Name: Pak Sari
-|   |   |   +-- Permissions: FULL ACCESS
-|   |   |   +-- Can: Manage all, delete business
-|   |   |   +-- Access: All outlets
-|   |   |
-|   |   +-- Manager (1)
-|   |   |   +-- Name: Ibu Dewi
-|   |   |   +-- Permissions: MENU, STAFF (non-owner), REPORTS, SETTINGS
-|   |   |   +-- Cannot: Delete business, manage owners
-|   |   |   +-- Access: Assigned outlets only
-|   |   |
-|   |   +-- Cashier (2)
-|   |   |   +-- Budi
-|   |   |   |   +-- PIN: ****
-|   |   |   |   +-- Permissions: Orders, Payments, Open Tables
-|   |   |   |   +-- Today Sales: Rp 2.4M (45 orders)
-|   |   |   |
-|   |   |   +-- Ani
-|   |   |       +-- PIN: ****
-|   |   |       +-- Permissions: Orders, Payments, Open Tables
-|   |   |       +-- Today Sales: Rp 1.8M (32 orders)
-|   |   |
-|   |   +-- Waiter (3)
-|   |   |   +-- Rudi, Siti, Joko
-|   |   |   +-- Permissions: Create orders, View tables
-|   |   |   +-- Cannot: Process payments
-|   |   |
-|   |   +-- Kitchen (2)
-|   |       +-- Chef Ahmad, Chef Maya
-|   |       +-- Permissions: View orders, Update status
-|   |       +-- KDS Access: Enabled
-|
-+-- Outlet: Branch (Bandung)
-    +-- Manager: Pak Tono
-    +-- Cashier: 1 staff
-    +-- Waiter: 2 staff
-
+|   |   +-- Ani
+|   |       +-- PIN: ****
+|   |       +-- Permissions: Orders, Payments, Open Tables
+|   |       +-- Today Sales: Rp 1.8M (32 orders)
+|   |
+|   +-- Waiter (3)
+|   |   +-- Rudi, Siti, Joko
+|   |   +-- Permissions: Create orders, View tables
+|   |   +-- Cannot: Process payments
+|   |
+|   +-- Kitchen (2)
+|       +-- Chef Ahmad, Chef Maya
+|       +-- Permissions: View orders, Update status
+|       +-- KDS Access: Enabled
 ```
 
 **Staff Features**
@@ -876,7 +866,7 @@ Business: Warung Makan Sari
 **Staff Operations**
 
 - Add/edit/delete staff (manager/owner only)
-- Assign staff to specific outlets
+- Assign staff to business
 - Reset PIN codes
 
 ### Reporting & Analytics
@@ -967,7 +957,7 @@ Reporting Dashboard
 |       +-- Table turnover rate: 6.2 per day
 
 Report Filters Available:
-[Date Range] [Outlet] [Staff] [Payment Method] [Open Table Status] [Export: PDF/Excel]
+[Date Range] [Business] [Staff] [Payment Method] [Open Table Status] [Export: PDF/Excel]
 ```
 
 **Sales Reports**
@@ -1001,7 +991,7 @@ Report Filters Available:
 
 - Gross Sales includes all created orders before void adjustment.
 - Voided Amount is reported as a separate metric (not merged into discounts).
-- Net Sales formula: `Gross Sales - Voided Amount - Discounts + Additional Fees` (tax handling follows outlet tax mode).
+- Net Sales formula: `Gross Sales - Voided Amount - Discounts + Additional Fees` (tax handling follows business tax mode).
 - Order counts must show:
   - Total Orders Created (includes voided)
   - Completed Orders (excludes voided)
@@ -1030,7 +1020,7 @@ Report Filters Available:
 **Report Filters**
 
 - Date range (daily, weekly, monthly, custom)
-- Outlet/location filter
+- Business/location filter
 - Staff filter
 - Payment method filter
 - Open table status filter (active/closed/all)
@@ -1298,7 +1288,7 @@ All staff can see table status and add orders
   - Discount Settings
   - Additional Fee Settings
   - Staff Administration
-  - Business & Outlet Settings
+  - Business Settings
 
 **Back Office Menu Quick Reference**
 
@@ -1314,7 +1304,7 @@ All staff can see table status and add orders
 | Global Settings > Additional Fee Settings          | Service/packaging/custom fee setup, fee calculation rules, fee display options                        |
 | Global Settings > Staff Administration             | Staff directory, role assignment, permission setup                                                    |
 | Global Settings > Staff Administration > Reset PIN | Manager resets staff PIN; staff must set a new PIN on next login                                      |
-| Global Settings > Business & Outlet Settings       | Business profile, outlet settings, tax configuration (optional PPN), printer and integration settings |
+| Global Settings > Business Settings                | Business profile, tax configuration (optional PPN), printer and integration settings                   |
 
 
 **Dashboard**
@@ -1386,11 +1376,10 @@ Inside `Global Settings`, the available configuration menus are:
   - Staff directory
   - Role assignment
   - Permission customization
-- Business & Outlet Settings
+- Business Settings
   - Business profile
-  - Outlet settings
   - Tax configuration:
-    - PPN toggle (enable/disable per outlet; optional)
+    - PPN toggle (enable/disable per business; optional)
     - PPN rate setting (active only when enabled)
     - Inclusive/exclusive mode
     - Tax label on receipt (show/hide)
@@ -1448,7 +1437,7 @@ Inside `Global Settings`, the available configuration menus are:
 - Authentication: JWT tokens
 - Real-time: WebSocket for live updates
 - Multi-user concurrency:
-  - Multiple staff can access same outlet data simultaneously
+  - Multiple staff can access same business data simultaneously
   - Order/table/payment updates propagate in real time to all active devices
   - Target sync latency: < 2 seconds on stable network
   - Conflict handling for concurrent edits (latest server state + explicit user refresh prompt when needed)
@@ -1520,34 +1509,34 @@ Inside `Global Settings`, the available configuration menus are:
 **Entity Relationship Overview**
 
 ```
-+--------+       +----------+       +--------+
-|  User  |<>-----| Business |<>-----| Outlet |
-+--------+       +----------+       +--------+
-                      |                   |
-                      |             +-----+-----+
-                      |             |           |
-                      v             v           v
-                 +----------+   +-------+  +---------+
-                 |  Staff   |   | Table |  |  Menu   |
-                 +----------+   +-------+  +----+----+
-                                               |
-                                         +-----+-----+
-                                         |           |
-                                         v           v
-                                    +----------+  +------------+
-                                    | Category |  |  MenuItem  |
-                                    +----------+  +------+-----+
-                                                       |
-                              +------------------------+--------+
-                              |                                 |
-                              v                                 v
-                       +------------+                 +----------------+
-                       |  Modifier  |                 | PaymentMethod  |
-                       +------------+                 +----------------+
++--------+       +----------+
+|  User  |<>-----| Business |
++--------+       +----------+
+                      |
+          +-----------+-----------+
+          |           |           |
+          v           v           v
+     +----------+  +-------+  +---------+
+     |  Staff   |  | Table |  |  Menu   |
+     +----------+  +-------+  +----+----+
+                                 |
+                           +-----+-----+
+                           |           |
+                           v           v
+                      +----------+  +------------+
+                      | Category |  |  MenuItem  |
+                      +----------+  +------+-----+
+                                         |
+                +------------------------+--------+
+                |                                 |
+                v                                 v
+         +------------+                 +----------------+
+         |  Modifier  |                 | PaymentMethod  |
+         +------------+                 +----------------+
 
-+--------+       +------------+       +----------+       +-----------+
-| Outlet |<>-----|   Order    |<>-----| OrderItem|<>-----|   Menu    |
-+--------+       +------------+       +----------+       |   Item    |
++----------+      +------------+       +----------+       +-----------+
+| Business |<>----|   Order    |<>-----| OrderItem|<>-----|   Menu    |
++----------+      +------------+       +----------+       |   Item    |
        |                 |                               +-----------+
        |                 |
        |                 +----------+
@@ -1594,7 +1583,7 @@ Inside `Global Settings`, the available configuration menus are:
 **Tax Compliance**
 
 - Support for Indonesian tax regulations
-- Optional PPn (Value Added Tax) calculation per outlet (can be enabled or disabled)
+- Optional PPn (Value Added Tax) calculation per business (can be enabled or disabled)
 - PB1 (Service Charge) handling
 - Tax invoice generation
 
@@ -1628,20 +1617,20 @@ Acceptance criteria below are **product-level**: design and engineering must be 
 
 **Onboarding & empty states**
 
-- New business / new outlet: Guided setup covers business profile, tax defaults, first menu structure, first staff + roles, and printer pairing; each step has a clear skip/defer path where safe.
+- New business setup: Guided setup covers business profile, tax defaults, first menu structure, first staff + roles, and printer pairing; each step has a clear skip/defer path where safe.
 - Empty dashboard and empty menu views explain what to do next with a primary call to action (no dead ends).
 - First login per role: Optional short tour or contextual hints for the three highest-frequency tasks for that role.
 
-**Multi-business & multi-outlet context**
+**Multi-business context**
 
-- Active business and active outlet are always visible in cashier and back office chrome; switching outlet requires explicit confirmation if open tables or unsaved drafts exist.
-- After switching context, all lists and totals reflect the new scope within one screen transition (no stale data without a labeled “refreshing” state).
-- Multi-user live sync: when two or more staff open the same outlet at the same time, order/table/payment status changes are reflected across active devices in near real time.
+- Active business is always visible in cashier and back office chrome; switching business requires explicit confirmation if open tables or unsaved drafts exist.
+- After switching context, all lists and totals reflect the new business scope within one screen transition (no stale data without a labeled “refreshing” state).
+- Multi-user live sync: when two or more staff open the same business at the same time, order/table/payment status changes are reflected across active devices in near real time.
 
 **Cashier: speed & power paths**
 
 - Menu supports search with typo-tolerant matching; optional quick entry via SKU/barcode when hardware is connected.
-- “Repeat last order” or equivalent one-action path exists for takeaway/recurring orders (configurable per outlet).
+- “Repeat last order” or equivalent one-action path exists for takeaway/recurring orders (configurable per business).
 - Favorites / pinned items or “recently ordered” strip available for high-volume SKUs.
 
 **Cashier: interrupt & recovery**
@@ -1687,7 +1676,7 @@ Acceptance criteria below are **product-level**: design and engineering must be 
 **Reporting & manager actions**
 
 - At least one dashboard surface highlights anomalies (e.g., discount rate vs 7-day baseline, count of voids, open tables over duration threshold) with drill-down to transactions.
-- Audit / activity views are human-readable (who, what, when, outlet) and exportable for investigations.
+- Audit / activity views are human-readable (who, what, when, business) and exportable for investigations.
 
 **Accessibility & inclusive design**
 
@@ -1714,7 +1703,7 @@ Acceptance criteria below are **product-level**: design and engineering must be 
 Use a concise KPI set focused on product health and operational impact:
 
 - Daily Active Businesses (DAB)
-- Orders per outlet per day
+- Orders per business per day
 - Average Order Value (AOV)
 - Open table adoption rate
 - Order-to-payment completion time (median)
@@ -1763,6 +1752,7 @@ Use a concise KPI set focused on product health and operational impact:
 
 | Version | Date       | Author       | Changes                                                                                        |
 | ------- | ---------- | ------------ | ---------------------------------------------------------------------------------------------- |
+| 0.0.24  | March 2026 | Product Team | Refactored model to Business=Outlet (removed separate outlet context references)              |
 | 0.0.23  | March 2026 | Product Team | Added explicit Void Reporting Rules under Reporting & Analytics                                |
 | 0.0.22  | March 2026 | Product Team | Removed SSO references; auth now explicitly OTP (SMS/WA) + PIN only                            |
 | 0.0.21  | March 2026 | Product Team | Added explicit PIN menu entries to app and Back Office quick reference tables                  |
