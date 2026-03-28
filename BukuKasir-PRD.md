@@ -92,11 +92,11 @@ Buku Ecosystem contains BukuPay, BukuKasir, and future apps all connected to a s
 **Application Components**
 
 
-| Component     | Platform                | Primary Users                               | Key Functions                                                                                                                                                                  |
-| ------------- | ----------------------- | ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Component     | Platform                | Primary Users                              | Key Functions                                                                                                                                                               |
+| ------------- | ----------------------- | ------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Frontline App | Native Android (Tablet) | Cashier Staff, Waiter Staff, Kitchen Staff | Role-based interface in one app: cashier UI (order/payment), waiter UI (order-taking and table service), and kitchen UI (KDS) for queue/prep status updates with auto-print |
-| Back Office   | Web (Responsive)        | Owners/Managers              | Menu management with thumbnails and AI generation, reporting, staff management, payment method customization, receipt settings                 |
-| API Backend   | Cloud-based             | Both                         | Data synchronization, business logic, user authentication, real-time order dispatch to kitchen                                                 |
+| Back Office   | Web (Responsive)        | Owners/Managers                            | Menu management with thumbnails and AI generation, reporting, staff management, payment method customization, receipt settings                                              |
+| API Backend   | Cloud-based             | Both                                       | Data synchronization, business logic, user authentication, real-time order dispatch to kitchen                                                                              |
 
 
 ## User Management & Multi-Tenancy
@@ -155,7 +155,7 @@ User Account (BukuKasir)
 | Manager | Menu management with thumbnail uploads and AI generation, staff management (except owner), customize payment methods, configure receipt templates, view reports, cannot delete business                           |
 | Cashier | Process orders, manage open tables (add orders, partial payments), apply discounts and additional fees, process payments with method selection, print custom receipts, view assigned tables, view limited reports |
 | Kitchen | View incoming orders on KDS tablet, update prep status (New/Preparing/Ready), monitor queue by station, trigger reprint of kitchen tickets                                                                        |
-| Waiter  | Create orders, view tables, add to open tables, can only view/edit orders created by themselves, cannot process payments                                                                                            |
+| Waiter  | Create orders, view tables, add to open tables, can only view/edit orders created by themselves, cannot process payments                                                                                          |
 
 
 ## Core Features
@@ -1057,21 +1057,23 @@ Report Filters Available:
 
 **App Menu Quick Reference by Persona**
 
-| Persona | Menu / Screen | Information Available |
-| ------- | ------------- | --------------------- |
-| Cashier | Table Grid | Table status, occupancy, running totals, takeaway/delivery shortcuts |
-| Cashier | Menu Interface | Categories, item cards, thumbnails, variants/modifiers, item prices |
-| Cashier | Current Order | Order lines, notes/modifiers, subtotal, discount, fees, tax, total |
-| Cashier | Quick Actions | Void/hold, discount, additional fee, print bill |
-| Cashier | Payment Screen | Payment methods, split payment input, payment confirmation, receipt trigger |
-| Waiter | My Tables / Table Service | Assigned/visible tables, status, seat capacity, open-table indicators |
-| Waiter | Menu Entry | Items, modifiers, notes, send-to-kitchen action |
-| Waiter | My Orders | Only orders/sessions created by logged-in waiter, own order history |
-| Waiter | Bill Request | Mark table as ready-to-pay for cashier handoff |
-| Kitchen | KDS Queue | New/preparing/ready tickets grouped by station and order time |
-| Kitchen | Ticket Detail | Table/session, items, modifiers, notes, fire time |
-| Kitchen | KDS Actions | Start preparing, mark ready, reprint kitchen ticket, sync status |
-| Cashier/Waiter/Kitchen | Profile/Security > Change PIN | Change own PIN using current PIN + new PIN confirmation |
+
+| Persona                | Menu / Screen                 | Information Available                                                       |
+| ---------------------- | ----------------------------- | --------------------------------------------------------------------------- |
+| Cashier                | Table Grid                    | Table status, occupancy, running totals, takeaway/delivery shortcuts        |
+| Cashier                | Menu Interface                | Categories, item cards, thumbnails, variants/modifiers, item prices         |
+| Cashier                | Current Order                 | Order lines, notes/modifiers, subtotal, discount, fees, tax, total          |
+| Cashier                | Quick Actions                 | Void/hold, discount, additional fee, print bill                             |
+| Cashier                | Payment Screen                | Payment methods, split payment input, payment confirmation, receipt trigger |
+| Waiter                 | My Tables / Table Service     | Assigned/visible tables, status, seat capacity, open-table indicators       |
+| Waiter                 | Menu Entry                    | Items, modifiers, notes, send-to-kitchen action                             |
+| Waiter                 | My Orders                     | Only orders/sessions created by logged-in waiter, own order history         |
+| Waiter                 | Bill Request                  | Mark table as ready-to-pay for cashier handoff                              |
+| Kitchen                | KDS Queue                     | New/preparing/ready tickets grouped by station and order time               |
+| Kitchen                | Ticket Detail                 | Table/session, items, modifiers, notes, fire time                           |
+| Kitchen                | KDS Actions                   | Start preparing, mark ready, reprint kitchen ticket, sync status            |
+| Cashier/Waiter/Kitchen | Profile/Security > Change PIN | Change own PIN using current PIN + new PIN confirmation                     |
+
 
 **Screen Layout**
 
@@ -1300,18 +1302,20 @@ All staff can see table status and add orders
 
 **Back Office Menu Quick Reference**
 
-| Menu | Information Available |
-| ---- | --------------------- |
-| Dashboard | Revenue overview, active orders, recent transactions, quick actions, sales trend |
-| Menu Configuration | Menu editor, thumbnail upload/AI generation, scheduling, import/export, item analytics |
-| Reports Center | Interactive charts, drill-down analytics, scheduled report emails, export |
-| Global Settings > Payment Method Settings | Enable/disable methods, custom methods, display order, permissions, references, default method |
-| Global Settings > Receipt Configuration | Header/footer editor, receipt layout/toggles, paper/font, auto-print, duplicate copies |
-| Global Settings > Discount Settings | Preset discounts, role limits, approval thresholds, discount reason categories |
-| Global Settings > Additional Fee Settings | Service/packaging/custom fee setup, fee calculation rules, fee display options |
-| Global Settings > Staff Administration | Staff directory, role assignment, permission setup |
-| Global Settings > Staff Administration > Reset PIN | Manager resets staff PIN; staff must set a new PIN on next login |
-| Global Settings > Business & Outlet Settings | Business profile, outlet settings, tax configuration (optional PPN), printer and integration settings |
+
+| Menu                                               | Information Available                                                                                 |
+| -------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| Dashboard                                          | Revenue overview, active orders, recent transactions, quick actions, sales trend                      |
+| Menu Configuration                                 | Menu editor, thumbnail upload/AI generation, scheduling, import/export, item analytics                |
+| Reports Center                                     | Interactive charts, drill-down analytics, scheduled report emails, export                             |
+| Global Settings > Payment Method Settings          | Enable/disable methods, custom methods, display order, permissions, references, default method        |
+| Global Settings > Receipt Configuration            | Header/footer editor, receipt layout/toggles, paper/font, auto-print, duplicate copies                |
+| Global Settings > Discount Settings                | Preset discounts, role limits, approval thresholds, discount reason categories                        |
+| Global Settings > Additional Fee Settings          | Service/packaging/custom fee setup, fee calculation rules, fee display options                        |
+| Global Settings > Staff Administration             | Staff directory, role assignment, permission setup                                                    |
+| Global Settings > Staff Administration > Reset PIN | Manager resets staff PIN; staff must set a new PIN on next login                                      |
+| Global Settings > Business & Outlet Settings       | Business profile, outlet settings, tax configuration (optional PPN), printer and integration settings |
+
 
 **Dashboard**
 
@@ -1738,19 +1742,6 @@ Staff
 - PB1 (Service Charge) handling
 - Tax invoice generation
 
-**Data Privacy**
-
-- PDPA (Personal Data Protection Act) compliance
-- User consent management
-- Data retention policies
-- Right to be forgotten implementation
-
-**Financial Regulations**
-
-- Financial reporting standards
-- Audit trail requirements
-- Transaction record retention (5+ years)
-
 ## User Experience (UX) Requirements
 
 **Cashier App UX**
@@ -1914,32 +1905,32 @@ Use a concise KPI set focused on product health and operational impact:
 **Document History**
 
 
-| Version | Date       | Author       | Changes                                                                           |
-| ------- | ---------- | ------------ | --------------------------------------------------------------------------------- |
-| 0.0.23  | March 2026 | Product Team | Added explicit Void Reporting Rules under Reporting & Analytics                   |
-| 0.0.22  | March 2026 | Product Team | Removed SSO references; auth now explicitly OTP (SMS/WA) + PIN only              |
-| 0.0.21  | March 2026 | Product Team | Added explicit PIN menu entries to app and Back Office quick reference tables    |
-| 0.0.20  | March 2026 | Product Team | Simplified void approval to manager PIN only; added staff PIN setup/change/reset workflow |
-| 0.0.19  | March 2026 | Product Team | Added explicit manager approval workflow for voiding entire order                |
-| 0.0.18  | March 2026 | Product Team | Added app menu quick reference table by persona (cashier, waiter, kitchen)       |
-| 0.0.17  | March 2026 | Product Team | Added explicit Back Office menu quick reference table under Back Office section   |
-| 0.0.16  | March 2026 | Product Team | Consolidated Back Office setting menus under explicit Global Settings group       |
-| 0.0.15  | March 2026 | Product Team | Switched app UI component stack from Material to Tamagui                         |
-| 0.0.14  | March 2026 | Product Team | Updated UI libraries: shadcn/ui for web and Material components for app          |
-| 0.0.13  | March 2026 | Product Team | Updated stack: React Native Expo app, TanStack web, backend Golang/Java with REST API |
-| 0.0.12  | March 2026 | Product Team | Authentication updated to phone-only with SMS/WhatsApp OTP (no email auth)       |
-| 0.0.11  | March 2026 | Product Team | Removed Data Protection and Audit Trail sections; waiter now limited to own orders |
-| 0.0.10  | March 2026 | Product Team | Removed Roadmap section and simplified Success Metrics KPI list                  |
-| 0.0.9   | March 2026 | Product Team | Added dedicated waiter interface (role-based, no payment access) in frontline app |
+| Version | Date       | Author       | Changes                                                                                        |
+| ------- | ---------- | ------------ | ---------------------------------------------------------------------------------------------- |
+| 0.0.23  | March 2026 | Product Team | Added explicit Void Reporting Rules under Reporting & Analytics                                |
+| 0.0.22  | March 2026 | Product Team | Removed SSO references; auth now explicitly OTP (SMS/WA) + PIN only                            |
+| 0.0.21  | March 2026 | Product Team | Added explicit PIN menu entries to app and Back Office quick reference tables                  |
+| 0.0.20  | March 2026 | Product Team | Simplified void approval to manager PIN only; added staff PIN setup/change/reset workflow      |
+| 0.0.19  | March 2026 | Product Team | Added explicit manager approval workflow for voiding entire order                              |
+| 0.0.18  | March 2026 | Product Team | Added app menu quick reference table by persona (cashier, waiter, kitchen)                     |
+| 0.0.17  | March 2026 | Product Team | Added explicit Back Office menu quick reference table under Back Office section                |
+| 0.0.16  | March 2026 | Product Team | Consolidated Back Office setting menus under explicit Global Settings group                    |
+| 0.0.15  | March 2026 | Product Team | Switched app UI component stack from Material to Tamagui                                       |
+| 0.0.14  | March 2026 | Product Team | Updated UI libraries: shadcn/ui for web and Material components for app                        |
+| 0.0.13  | March 2026 | Product Team | Updated stack: React Native Expo app, TanStack web, backend Golang/Java with REST API          |
+| 0.0.12  | March 2026 | Product Team | Authentication updated to phone-only with SMS/WhatsApp OTP (no email auth)                     |
+| 0.0.11  | March 2026 | Product Team | Removed Data Protection and Audit Trail sections; waiter now limited to own orders             |
+| 0.0.10  | March 2026 | Product Team | Removed Roadmap section and simplified Success Metrics KPI list                                |
+| 0.0.9   | March 2026 | Product Team | Added dedicated waiter interface (role-based, no payment access) in frontline app              |
 | 0.0.8   | March 2026 | Product Team | Added optional PPN config, mandatory report charts, and real-time multi-user sync requirements |
-| 0.0.7   | March 2026 | Product Team | Simplified custom payment method to free-text user input (any label)             |
-| 0.0.6   | March 2026 | Product Team | Set payment management to record-only (no payment integrations in current scope)  |
-| 0.0.5   | March 2026 | Product Team | Added KDS as role-based tablet interface in same app + auto-print kitchen tickets |
-| 0.0.4   | March 2026 | Product Team | Integrated Open Table branch directly into the main Order Flow                    |
-| 0.3     | March 2026 | Product Team | Added visual ASCII tree charts for all Core Features sections                     |
-| 0.2     | March 2026 | Product Team | Added table of contents with section anchor links                                 |
-| 1.1     | March 2026 | Product Team | Added UX Acceptance Criteria; deduplicated Report Filters list                    |
-| 1.0     | March 2025 | Product Team | Initial PRD                                                                       |
+| 0.0.7   | March 2026 | Product Team | Simplified custom payment method to free-text user input (any label)                           |
+| 0.0.6   | March 2026 | Product Team | Set payment management to record-only (no payment integrations in current scope)               |
+| 0.0.5   | March 2026 | Product Team | Added KDS as role-based tablet interface in same app + auto-print kitchen tickets              |
+| 0.0.4   | March 2026 | Product Team | Integrated Open Table branch directly into the main Order Flow                                 |
+| 0.3     | March 2026 | Product Team | Added visual ASCII tree charts for all Core Features sections                                  |
+| 0.2     | March 2026 | Product Team | Added table of contents with section anchor links                                              |
+| 1.1     | March 2026 | Product Team | Added UX Acceptance Criteria; deduplicated Report Filters list                                 |
+| 1.0     | March 2025 | Product Team | Initial PRD                                                                                    |
 
 
 **Document Owner:** Product Management Team
