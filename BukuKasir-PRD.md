@@ -1834,7 +1834,7 @@ Inside `Global Settings`, the available configuration menus are:
 - Discount and fee analytics
 - Scheduled report emails
 - Data export options
-- **Export limit: 31 days maximum per export**
+- Export limit: 31 days maximum per export
 
 ## Technical Requirements
 
@@ -1912,8 +1912,8 @@ Inside `Global Settings`, the available configuration menus are:
 
 **Payment Integrations (Current Scope)**
 
-- **NO external payment gateway integration**
-- **NO direct e-wallet / QRIS / BukuPay API payment processing**
+- NO external payment gateway integration
+- NO direct e-wallet / QRIS / BukuPay API payment processing
 - All payment methods are recorded manually for bookkeeping and reconciliation
 - Future payment processing may be added post-MVP
 
@@ -1927,7 +1927,7 @@ Inside `Global Settings`, the available configuration menus are:
 - Support for 58mm and 80mm paper widths
 - Auto-print kitchen tickets when order is sent to kitchen
 - Reprint API/action support from cashier and kitchen interfaces
-- **Printer failure handling:** Error dialog with retry/print later/skip options
+- Printer failure handling: Error dialog with retry/print later/skip options
 
 **Image Storage & AI Generation**
 
@@ -2037,7 +2037,7 @@ Inside `Global Settings`, the available configuration menus are:
 **Tax Compliance**
 
 - Support for Indonesian tax regulations
-- **Optional PPN (Value Added Tax) toggle** - business owner responsibility for compliance
+- Optional PPN (Value Added Tax) toggle - business owner responsibility for compliance
 - When PPN enabled:
   - Rate configurable (default 10%)
   - Inclusive/exclusive mode
@@ -2052,7 +2052,7 @@ Inside `Global Settings`, the available configuration menus are:
 
 **Data Retention Policy**
 
-- **All data retained indefinitely**
+- All data retained indefinitely
 - No automatic deletion of transactions or void records
 - Businesses can export data anytime
 - Data archived with compression after 2 years but remains accessible
@@ -2068,7 +2068,7 @@ Inside `Global Settings`, the available configuration menus are:
 - Continuous Ordering: Easy "Add More" action on occupied tables (< 2 taps)
 - Order History Access: Quick view of all order sessions for a table
 - Partial Payment Clarity: Clear display of paid amount vs remaining balance
-- **Partial Payment: Any amount allowed (no minimum)**
+- Partial Payment: Any amount allowed (no minimum)
 - Error Prevention: Confirm destructive actions
 - Visual Feedback: Haptic feedback for successful actions
 - Accessibility: Support for screen readers, icons + text labels (not color-only)
@@ -2101,26 +2101,26 @@ Acceptance criteria below are **product-level**: design and engineering must be 
 - Active business is always visible in cashier and back office chrome; switching business requires explicit confirmation if open tables or unsaved drafts exist.
 - After switching context, all lists and totals reflect the new business scope within one screen transition (no stale data without a labeled "refreshing" state).
 - Multi-user live sync: when two or more staff open the same business at the same time, order/table/payment status changes are reflected across active devices in near real time.
-- **Conflict prevention: Real-time indicators show who has table open; optimistic locking prevents double-payment**
+- Conflict prevention: Real-time indicators show who has table open; optimistic locking prevents double-payment
 
 **Cashier: speed & power paths**
 
 - Menu supports search with typo-tolerant matching; optional quick entry via SKU/barcode when hardware is connected.
 - "Repeat last order" or equivalent one-action path exists for takeaway/recurring orders (configurable per business).
 - Favorites / pinned items or "recently ordered" strip available for high-volume SKUs.
-- **Auto-lock after 5 minutes inactivity; PIN required to resume**
+- Auto-lock after 5 minutes inactivity; PIN required to resume
 
 **Cashier: interrupt & recovery**
 
 - Destructive actions (void order, void line, cancel payment in progress) require confirmation with plain-language consequence; irreversible actions show who will be recorded as actor after PIN/approval.
 - Send-to-kitchen: If supported, customer-visible or staff-visible distinction between "saved draft" vs "sent/fired" is clear; recovery path when kitchen should not prepare is defined.
 - Payment: If user navigates away or app backgrounds mid-flow, returning lands on a recoverable state or explicit "resume / cancel payment" choice.
-- **App crash: Recovery dialog on relaunch with option to recover or discard unsaved transaction**
+- App crash: Recovery dialog on relaunch with option to recover or discard unsaved transaction
 
 **Hardware & connectivity**
 
 - Printer unavailable: Blocking banner on payment/receipt steps with actionable steps (retry, select printer, print later if policy allows); never silent failure after "Payment successful."
-- **Printer failure: Error dialog with retry/print later/skip options; payment always completes**
+- Printer failure: Error dialog with retry/print later/skip options; payment always completes
 - Bluetooth peripheral drop: User sees connection status and reconnect affordance from the screen where printing or card flow is triggered.
 - Low battery / offline: Persistent indicator; when offline, queued actions and sync backlog are visible; staff can end shift only per policy (with warning if data not synced).
 
@@ -2128,23 +2128,23 @@ Acceptance criteria below are **product-level**: design and engineering must be 
 
 - Per-order or per-action sync state (pending / failed / synced) is surfaced where operations can conflict; failed sync shows retry and support guidance.
 - Conflict resolution prefers explicit user choice when two devices edit the same open table; automatic merge rules are documented and surfaced in release notes / admin help.
-- **Offline limits: Cache 7 days/500 transactions, queue max 100 ops, alert at 80% full**
-- **Offline payment: Queue locally, check table state on sync, alert if conflicts**
+- Offline limits: Cache 7 days/500 transactions, queue max 100 ops, alert at 80% full
+- Offline payment: Queue locally, check table state on sync, alert if conflicts
 
 **Open table, waiter, handoff**
 
 - Occupied open table shows running total, session count, and last activity time; "Add more" is reachable in ≤2 taps from floor view.
 - When multiple staff act on one table, order timeline shows staff attribution per session or per send where technically feasible.
 - Waiter-created orders and cashier payment: No duplicate bill risk—UX specifies whether waiter hands device, or cashier pulls table, and how unpaid orders appear to each role.
-- **Waiter table transfer: Request/accept workflow to handoff tables between waiters**
-- **Partial payment: No minimum amount required**
+- Waiter table transfer: Request/accept workflow to handoff tables between waiters
+- Partial payment: No minimum amount required
 
 **Customer-facing moments (POS)**
 
 - Before "Pay," staff can show a read-only bill summary (line items, discounts, fees, tax wording, total) suitable for customer review; text size readable at arm's length on tablet.
 - Split bill: UX supports at least split-by-amount and split-by-line-item (or documented alternative), with running validation so allocated parts always equal total before payment is committed.
 - Partial payment: Remaining balance and "table still open" state are shown to staff and reflected on printed interim bill if used.
-- **No refunds: System voids only; educate users to catch mistakes before payment**
+- No refunds: System voids only; educate users to catch mistakes before payment
 
 **Receipts & PII**
 
@@ -2155,27 +2155,27 @@ Acceptance criteria below are **product-level**: design and engineering must be 
 
 - Payment methods, fees, discounts, and receipt templates: Live preview (receipt mock) before save; invalid combinations (e.g., fee before/after tax) blocked with inline explanation.
 - Menu bulk import: Row-level validation report with downloadable error file; partial import allowed only when explicitly chosen and summarized before commit.
-- **Ownership transfer: Guided workflow with verification steps and audit logging**
+- Ownership transfer: Guided workflow with verification steps and audit logging
 
 **Reporting & manager actions**
 
 - At least one dashboard surface highlights anomalies (e.g., discount rate vs 7-day baseline, count of voids, open tables over duration threshold) with drill-down to transactions.
 - Audit / activity views are human-readable (who, what, when, business) and exportable for investigations.
-- **Report export limit: 31 days maximum per export**
-- **All data retained indefinitely; archive after 2 years with compression**
+- Report export limit: 31 days maximum per export
+- All data retained indefinitely; archive after 2 years with compression
 
 **Accessibility & inclusive design**
 
 - Table and order status do not rely on color alone (icons, patterns, or labels accompany green/red/yellow states).
 - System text scaling / large touch targets meet or exceed platform guidelines for primary actions.
 - Screen reader labels for table grid, order lines, and payment method list are required acceptance checks on Android.
-- **All status indicators: Icon + Text + Color (never color-only)**
+- All status indicators: Icon + Text + Color (never color-only)
 
 **AI thumbnails**
 
 - Generation shows progress, cancel, and retry; failed generation does not block saving the menu item (fallback to text-only or manual upload).
 - Staff can replace or remove AI image in one flow; generated images are visually distinct or labeled in editor if required for trust/compliance.
-- **AI generation included in subscription - unlimited generations**
+- AI generation included in subscription - unlimited generations
 
 **Localization**
 
@@ -2231,23 +2231,6 @@ Use a concise KPI set focused on product health and operational impact:
 - CDN: Content Delivery Network
 - PPN: Pajak Pertambahan Nilai (Value Added Tax)
 - PB1: Pajak Restoran (Restaurant Tax/Service Charge)
-
-**Key Decisions Log**
-
-| Decision | Rationale | Date |
-|----------|-----------|------|
-| Manual payment recording only | Simplifies MVP, reduces compliance complexity | March 2026 |
-| No refunds (voids only) | Aligns with Indonesian F&B practices, reduces fraud | March 2026 |
-| Unlimited data retention | Compliance requirement, audit trail integrity | March 2026 |
-| No auto-close for open tables | Flexibility for F&B operations, manual control | March 2026 |
-| AI generation included in subscription | Predictable pricing, encourages adoption | March 2026 |
-| Real-time sync with conflict prevention | Best UX for multi-user scenarios | March 2026 |
-| 5-minute auto-lock | Balance of security and usability | March 2026 |
-| 31-day export limit | Performance protection, reasonable for analysis | March 2026 |
-| No EOD process | Simpler operations, data always available | March 2026 |
-| Optional PPN toggle | Business owner responsibility model | March 2026 |
-| Single owner per business | Clear accountability, simplified permissions | March 2026 |
-| Waiter table transfer workflow | Enables team service while maintaining accountability | March 2026 |
 
 **References**
 
