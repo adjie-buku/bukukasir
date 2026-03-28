@@ -1,9 +1,39 @@
 # BukuKasir - Product Requirements Document (PRD)
 
 **Product Name:** BukuKasir
-**Version:** 1.1
+**Version:** 0.2  
 **Date:** March 2026
 **Status:** Prototype
+
+## Table of contents
+
+- [Executive Summary](#executive-summary)
+- [Product Vision](#product-vision)
+- [Target Market](#target-market)
+- [System Architecture](#system-architecture)
+- [User Management & Multi-Tenancy](#user-management--multi-tenancy)
+- [Core Features](#core-features)
+  - [Menu Management](#menu-management)
+  - [Table Management](#table-management)
+  - [Order Management (Cashier App)](#order-management-cashier-app)
+  - [Transaction Customization](#transaction-customization)
+  - [Payment Management](#payment-management)
+  - [Staff Management](#staff-management)
+  - [Reporting & Analytics](#reporting--analytics)
+- [Cashier App (Android Tablet)](#cashier-app-android-tablet)
+- [Back Office (Web)](#back-office-web)
+- [Technical Requirements](#technical-requirements)
+- [Integration Requirements](#integration-requirements)
+- [Data Model (High-Level)](#data-model-high-level)
+- [Security Requirements](#security-requirements)
+- [Performance Requirements](#performance-requirements)
+- [Compliance & Legal](#compliance--legal)
+- [User Experience (UX) Requirements](#user-experience-ux-requirements)
+  - [UX Acceptance Criteria](#ux-acceptance-criteria)
+- [Success Metrics (KPIs)](#success-metrics-kpis)
+- [Roadmap](#roadmap)
+- [Risks & Mitigation](#risks--mitigation)
+- [Appendix](#appendix)
 
 ## Executive Summary
 
@@ -1378,10 +1408,11 @@ Acceptance criteria below are **product-level**: design and engineering must be 
 **Document History**
 
 
-| Version | Date       | Author       | Changes     |
-| ------- | ---------- | ------------ | ----------- |
+| Version | Date       | Author       | Changes                                                        |
+| ------- | ---------- | ------------ | -------------------------------------------------------------- |
+| 0.2     | March 2026 | Product Team | Added table of contents with section anchor links              |
 | 1.1     | March 2026 | Product Team | Added UX Acceptance Criteria; deduplicated Report Filters list |
-| 1.0     | March 2025 | Product Team | Initial PRD |
+| 1.0     | March 2025 | Product Team | Initial PRD                                                    |
 
 
 **Document Owner:** Product Management Team
